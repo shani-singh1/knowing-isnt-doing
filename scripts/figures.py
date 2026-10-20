@@ -446,7 +446,7 @@ def fig7():
 
 # ── Figure 8: predictions written in a plan ─────────────────────────────────────────────────────────
 def fig8():
-    fig = plt.figure(figsize=(WIDTH, 2.2))
+    fig = plt.figure(figsize=(WIDTH, 1.95))
     header(fig, "Asked for a prediction in its plan, the agent wrote a range its result could not leave")
     t = top(fig)
     a = fig.add_axes([0.27, 0.16, 0.42, t - 0.20])

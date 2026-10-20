@@ -13,6 +13,7 @@
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \usepackage{titlesec}
 \usepackage{float}
+\usepackage{placeins}
 
 \setlist{itemsep=1pt,topsep=3pt,parsep=0pt,leftmargin=1.4em}
 \titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
@@ -51,8 +52,8 @@
 \noindent Agents built on frontier models now run scientific analyses lasting hours. We traced 104 failed outputs
 from 43 runs of two computational biology benchmarks to the turn where each error entered, and replayed 13 turns
 under controlled changes. In 42 of 58 failed answers on one benchmark, the agent had printed a number that
-contradicted its answer. Asked directly, the model that ran each of six tasks stated the fact that would have prevented the
-failure. In replay, the agent followed up the disproving evidence in 10 of 78 samples with no note and in 67 of 78 when told
+contradicted its answer. Asked directly, the same model that ran or replayed each of six tasks stated the fact that would
+have prevented the failure. In replay, the agent followed up the disproving evidence in 10 of 78 samples with no note and in 67 of 78 when told
 the decisive question. A note naming only the disproving output reached 51 of 78. The same note naming another output of
 the same result reached 11. Every mechanism that lacked the answer, from maximum reasoning effort to fresh readers, stayed
 between 9 and 18 of 78. The agents had the knowledge and the evidence. What failed was the choice of
@@ -84,8 +85,8 @@ its assumption, or checked an assumption only in aggregate. Lost state, output f
 the primary cause of none (\sref{sec:taxonomy}).
 \item \textbf{The disproving evidence was on screen.} In 42 of 58 failed GeneBench-Pro answers the agent had printed a number
 that contradicted its answer. It wrote that number off as noise, heterogeneity or sparse annotation (\sref{sec:behaviour}).
-\item \textbf{The models knew.} In six cases, the model that ran the task stated the decisive fact when asked directly, in every
-sample (\sref{sec:know}).
+\item \textbf{The models knew.} In six cases, the model that ran or replayed the task stated the decisive fact when asked directly,
+in every sample (\sref{sec:know}).
 \item \textbf{The right question is taken up.} Told the decisive question, the agent followed up in 67 of 78 replayed samples,
 against 10 of 78 with no note (\sref{sec:question}).
 \item \textbf{Naming the right output is enough, and naming another does nothing.} A note naming only the disproving output
@@ -143,7 +144,7 @@ number came from the agent's own code. What was missing was the choice of which 
 \paragraph{Long-context retrieval and unexpressed knowledge.} Information in the middle of a long context is used less well than
 information near its ends \citep{liu2024lost}. Models also carry knowledge about their own answers that their outputs do not always
 express \citep{kadavath2022language,burns2023latent,orgad2025know}. Our failure turns place the disproving output at the end of the
-context, and the knowledge we probe is stated readily when asked. Neither retrieval nor elicitation explains the failures we report.
+context, and the knowledge we probe is stated readily when asked, so neither retrieval nor elicitation explains our failures.
 
 \section{The study}\label{sec:study}
 
@@ -169,8 +170,10 @@ and settings are in \aref{app:models}.
 All runs used one agent harness. The model writes and executes code in a sandbox against staged data files, can write a plan and
 delegate steps, and receives short notes at turn boundaries. The harness sets no limit on the number of steps or turns. The harness
 gives the agent a library of general method documentation (for example, on admixture dating and Mendelian randomization), written
-before the runs studied here, and the agent chooses when to consult it. Part of that library was written after earlier runs on the
-same GeneBench-Pro problems, by authors told not to write anything specific to a benchmark problem. Before attributing any behaviour
+before the runs studied here, and the agent chooses when to consult it. Part of that library was written by model agents after earlier runs on the
+same GeneBench-Pro problems, under an instruction to include nothing specific to a benchmark problem. Guidance of that kind could only
+have helped the agent. Every failure we analyse occurred with the library loaded, and no claim in this paper rests on a benchmark score.
+Before attributing any behaviour
 to a model we audited the harness for confounds and corrected what we found (\aref{app:confounds}).
 
 \subsection{Tracing failures}\label{sec:tracing}
@@ -239,7 +242,7 @@ primary cause of no failure. A crashed diagnostic cell was a contributing cause 
 factor in three reports.
 
 Second, missing knowledge was never the cause. No report traced a failure to a fact the agent lacked. In each of the six cases where we
-put the decisive fact to the model that ran the task, it stated it (\sref{sec:know}).
+put the decisive fact to the model that ran or replayed the task, it stated it (\sref{sec:know}).
 
 Third, the errors are systematic, not noise. The two DeepSeek V4.1 Flash trials submitted the same wrong answers to four decimals on the
 chromatin-contact problem. On the admixture problem, both trials, GPT-6 Astra and Claude Haiku 5.5 reported the same wrong ancestry
@@ -249,9 +252,9 @@ vote.
 \section{How these agents behave as researchers}\label{sec:behaviour}
 
 \subsection{They know more than they use}\label{sec:know}
-Asked directly, each model stated the fact that its run then failed to use. Asked about the survey without the task around it, Claude
-Haiku 5.5 wrote that ``the range check can't detect reversed or altered coding, since a reversed item still falls within 1 to 5''. It
-said so in 10 of 10 samples. In 2 of 5 live runs, the same model ran that range check, declared the data clean and failed.
+Asked directly, each model stated the fact that its run then failed to use. Claude Haiku 5.5 was shown the survey's wave means without the task, and told that a
+range check had passed. It wrote that ``the range check can't detect reversed or altered coding, since a reversed item still falls within 1 to 5''. It
+said the range check cannot detect a reversed item in 10 of 10 samples. In 2 of 5 live runs, the same model ran that range check, declared the data clean and failed.
 
 \figref{fig:know} gives six such cases, each comparing a model with itself. In every case the model stated the fact in every sample when
 asked, and used it far less often in its runs or in the replay of its failure turn. A model's answer to a direct question is therefore
@@ -297,7 +300,7 @@ CRISPR screen (DeepSeek V4.1 Flash) & no plate effect & bootstrap interval of th
 
 \subsection{They see the contradiction and explain it away}
 When their own output contradicted their answer, the agents supplied an explanation and did not test it. A structural-variant analysis put
-the rows that still disagreed down to ``heavy-tailed noise''. This happened in 42 of the 58 failed GeneBench-Pro answers.
+the rows that still disagreed down to ``heavy-tailed noise''. The contradicting number was on screen in 42 of the 58 failed GeneBench-Pro answers.
 
 The explanations took a few recurring forms. A chromatin-contact analysis called its background ``essentially unbiased'' beside a block of
 strong pixels present only in cases. A Gene Ontology summary in which most genes carried only the root term reported ``sparse annotation''.
@@ -336,7 +339,7 @@ heterogeneity statistic of 6,733 on 40 degrees of freedom and chose an estimator
 instruments give, so the printed value says the instrument model is wrong. The read-counting audit printed \texttt{all\_zero\_loci: 587}
 and made no remark.
 
-\subsection{Text changes the step it was written for, not the outcome}
+\subsection{In our probes, text changed the step it was written for, not the outcome}
 A sentence added to the agent's instructions changed the next step and left the result unchanged. In the load series, a sentence that
 encouraged checks changed the first replies. A typical one read ``Before computing, I'll check that the timestamps are not shifted by a clock artifact,
 using the hour of the daily load peak by month.'' The share of first replies that split the profile by period rose from 9 to 17 of 30.
@@ -390,7 +393,7 @@ testable consequences. The agent treated each as a conclusion.
 \end{enumerate}
 A likely source of these behaviours is training. Pretraining and post-training reward answering and completing, and nothing in them rewards an
 attempt to falsify one's own result. This is a hypothesis consistent with the evidence. It fits the contrast at the centre of this paper, in
-which the same weights behave differently in different contexts. They state the fact when asked and pass over it as an agent.
+which the same weights state the fact when asked and pass over it as an agent.
 
 \section{What steers them and what doesn't}\label{sec:steer}
 
@@ -482,8 +485,8 @@ properties the run had already handled. A question leaves the judgement with the
 overrides it, and is wrong whenever that component is.
 
 \subsection{Computed comparisons work; judged ones fail}
-Every route that relied on the agent judging whether something mattered was lenient. Asked about the survey without the task, 10 of 10 samples
-pointed at the wrong wave, the one with the largest drop. A correlation computed per wave exposes the reversed wave regardless of where suspicion
+Every route that relied on the agent judging whether something mattered was lenient. In the same 10 survey samples that said the range check
+cannot detect a reversal, the wave named as the one to check was the wave with the largest drop, not the reversed one. A correlation computed per wave exposes the reversed wave regardless of where suspicion
 points.
 
 Getting the agent to look is not enough either. Told to compute the per-chromosome ancestry table, Claude Haiku 5.5 did so in 10 of 10 forks
@@ -500,17 +503,17 @@ given an agent's own account of its analysis named the step the agent had missed
 \tabref{tab:habits} states the habits whose absence the failures show. Each fires on an event in the agent's own work, specifies one act and a
 condition for stopping, counters a behaviour of \sref{sec:behaviour}, and covers at least three unrelated cases in our data.
 
-\begin{table}[t]
+\begin{table}[!htb]
 \centering\small
 \footnotesize\caption{Seven habits of a careful analyst, derived from the traced failures. Cases: the unrelated analyses in our data where the habit would have applied.}
 \label{tab:habits}
-\begin{tabularx}{\textwidth}{@{}P{3.0cm}P{2.6cm}LP{2.6cm}P{1.9cm}P{2.3cm}@{}}
+\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.0}\begin{tabularx}{\textwidth}{@{}P{2.9cm}P{2.6cm}LP{2.5cm}P{1.75cm}P{3.0cm}@{}}
 \toprule
 Habit & Trigger & Act & Stop when & Counters & Cases\\
 \midrule
-1. Know why each field exists before using the data & a column records how, when or in which batch a row was made & use the field, or rule it out by its histogram; a median rules nothing out & the field is used or its distribution shows it inert & the familiar default & structural variants, carrier, CRISPR screen, load series (4)\\
+1. Know why each field exists before using the data & a column records how, when or in which batch a row was made & use it, or rule it out by its histogram & the field is used or its distribution shows it inert & the familiar default & structural variants, carrier, CRISPR screen, load series (4)\\
 2. Write the expected result before computing & a step is about to run & state a value or range the result could miss & the result is compared with it & no expectation & load series, kinetics, DamID, Mendelian randomization, read counting (5)\\
-3. A check must be able to fail & an assumption is checked & split by the unit where the assumption could break & the check's result would differ were the assumption false & checks that cannot fail & survey, load series, admixture, QTL (4)\\
+3. A check must be able to fail & an assumption is checked & split by the unit where the assumption could break & its result would differ were the assumption false & checks that cannot fail & survey, load series, admixture, QTL (4)\\
 4. Your own disagreeing estimates are the result & two estimates of one quantity differ & explain the difference; report one value & the difference is attributed to a named choice or stratum & range reporting & carrier (two trials), treatment effect, structural variants, CRISPR screen (4)\\
 5. ``Noise'', ``sparse'' and ``heterogeneity'' are claims & the agent is about to explain a discrepancy & compute what the explanation predicts & the prediction is tested & explaining it away & admixture, structural variants, Gene Ontology, carrier (4)\\
 6. A nuisance that lines up with the effect is tested within itself & a technical variable tracks the variable of interest & test the effect within strata of the nuisance & the effect is measured within strata & the familiar default & single-cell eQTL, CRISPR screen, treatment effect (3)\\
@@ -534,6 +537,7 @@ For people building research agents, the results suggest five practices.
 \item Freeze an intervention before evaluating it, and evaluate it over many turns on held-out problems.
 \end{itemize}
 
+\FloatBarrier
 \section{Open problems}\label{sec:open}
 
 \paragraph{1. Choosing the question without knowing the answer.} This is the measured bottleneck. The decisive question is taken up in 67 of
@@ -553,8 +557,8 @@ we have not tested.
 that does. That means episodes in which the reward depends on finding the flaw in one's own analysis, not on completing it.
 
 \paragraph{5. Evaluating process interventions.} Benchmark convention is a large share of failure, 22 to 31\% here, and must be separated before a
-score is read as analysis quality. Run-to-run variation is also large. Two DeepSeek V4.1 Flash trials on the same build each passed 2 of 10 problems,
-but not the same two.
+score is read as analysis quality. Run-to-run variation is also large. Two trials of the same model on the same build passed different problems,
+and 4 of 30 answer keys changed between them.
 
 Single-turn replays measure uptake at one turn, and multi-turn forks can disagree with them. At the single-cell point, the agent followed up in no
 single-turn replay and in 3 of 3 six-turn forks (\aref{app:multiturn}).
