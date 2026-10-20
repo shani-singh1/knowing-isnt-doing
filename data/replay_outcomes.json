@@ -1,0 +1,1700 @@
+{
+ "conditions": [
+  "No note (baseline)",
+  "Maximum reasoning effort",
+  "Generic reminder",
+  "Self-review prompt",
+  "Fresh reader: open question",
+  "Fresh reader: assumptions",
+  "Fresh reader: largest impact",
+  "Fresh readers: all questions",
+  "Fresh reader: disagreements",
+  "Pointer to the output",
+  "Answer-informed question"
+ ],
+ "failure_points": [
+  {
+   "id": "admixture-dating/deepseek",
+   "problem": "Admixture dating",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "admixture-dating/astra",
+   "problem": "Admixture dating",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "GPT-6 Astra"
+  },
+  {
+   "id": "chromatin-contact-loop/deepseek",
+   "problem": "Chromatin-contact loop strength",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "mendelian-randomization-residual/deepseek",
+   "problem": "Mendelian randomization (residual LD)",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "mendelian-randomization-heterogeneity/astra",
+   "problem": "Mendelian randomization (heterogeneity)",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "GPT-6 Astra"
+  },
+  {
+   "id": "qtl-multiparent/astra",
+   "problem": "QTL mapping, multiparent cross",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "GPT-6 Astra"
+  },
+  {
+   "id": "carrier-frequency/deepseek",
+   "problem": "Carrier-frequency estimation",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "rnaseq-read-counting/sol",
+   "problem": "RNA-seq read counting",
+   "benchmark": "BixBench3",
+   "run_model": "GPT-6.1 Sol root, DeepSeek V4.1 Flash sub-agents"
+  },
+  {
+   "id": "treatment-effect/deepseek",
+   "problem": "Treatment-effect estimation",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "structural-variant/deepseek",
+   "problem": "Structural-variant association",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "DeepSeek V4.1 Flash"
+  },
+  {
+   "id": "gene-ontology-summary/sol",
+   "problem": "Gene Ontology summary",
+   "benchmark": "BixBench3",
+   "run_model": "GPT-6.1 Sol root, DeepSeek V4.1 Flash sub-agents"
+  },
+  {
+   "id": "single-cell-eqtl/astra",
+   "problem": "Single-cell expression QTL",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "GPT-6 Astra"
+  },
+  {
+   "id": "crispr-interference/astra",
+   "problem": "CRISPR interference screen",
+   "benchmark": "GeneBench-Pro",
+   "run_model": "GPT-6 Astra"
+  }
+ ],
+ "control_points": [
+  "control/single-cell-eqtl",
+  "control/selection-inference-a",
+  "control/selection-inference-b"
+ ],
+ "single_turn": {
+  "No note (baseline)": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    false,
+    false,
+    true,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    true,
+    true,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    true,
+    false,
+    false,
+    true,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Maximum reasoning effort": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Generic reminder": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    false,
+    true,
+    false,
+    true,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    true,
+    false,
+    true
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Self-review prompt": {
+   "admixture-dating/deepseek": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    true
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh reader: open question": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh reader: assumptions": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    true,
+    true,
+    false,
+    false,
+    true
+   ],
+   "chromatin-contact-loop/deepseek": [
+    false,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    true,
+    true,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh reader: largest impact": {
+   "admixture-dating/deepseek": [
+    false,
+    true,
+    false,
+    false,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    false,
+    false,
+    true,
+    false,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    false,
+    true,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh readers: all questions": {
+   "admixture-dating/deepseek": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    false
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    true,
+    true,
+    false,
+    true,
+    false,
+    true
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh reader: disagreements": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    false,
+    true,
+    false,
+    true,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    true,
+    true,
+    false,
+    false,
+    true
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "Pointer to the output": {
+   "admixture-dating/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    true,
+    false,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "rnaseq-read-counting/sol": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "treatment-effect/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    false,
+    true
+   ],
+   "structural-variant/deepseek": [
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    true
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "control/single-cell-eqtl": [],
+   "control/selection-inference-a": [],
+   "control/selection-inference-b": []
+  },
+  "Answer-informed question": {
+   "admixture-dating/deepseek": [
+    true,
+    true,
+    false,
+    true,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "carrier-frequency/deepseek": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "treatment-effect/deepseek": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "structural-variant/deepseek": [
+    true,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "gene-ontology-summary/sol": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "crispr-interference/astra": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  }
+ },
+ "multi_turn": {
+  "No note (baseline)": {
+   "carrier-frequency/deepseek": [
+    false,
+    false,
+    true
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    false,
+    true,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false
+   ]
+  },
+  "Fresh readers: all questions": {
+   "carrier-frequency/deepseek": [
+    true,
+    true,
+    true
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    false,
+    false
+   ]
+  },
+  "Answer-informed question": {
+   "carrier-frequency/deepseek": [
+    true,
+    true,
+    true
+   ],
+   "single-cell-eqtl/astra": [
+    true,
+    true,
+    true
+   ],
+   "admixture-dating/astra": [
+    true,
+    true,
+    true
+   ],
+   "qtl-multiparent/astra": [
+    true,
+    true
+   ]
+  }
+ },
+ "early_list": {
+  "problems": [
+   {
+    "key": "structural",
+    "problem": "Structural-variant association",
+    "list_named_decisive_check": true
+   },
+   {
+    "key": "multiparent",
+    "problem": "QTL mapping, multiparent cross",
+    "list_named_decisive_check": true
+   },
+   {
+    "key": "crispri",
+    "problem": "CRISPR interference screen",
+    "list_named_decisive_check": true
+   },
+   {
+    "key": "txr1",
+    "problem": "Treatment-effect estimation",
+    "list_named_decisive_check": true
+   },
+   {
+    "key": "carrier",
+    "problem": "Carrier-frequency estimation",
+    "list_named_decisive_check": false
+   },
+   {
+    "key": "mvmr",
+    "problem": "Mendelian randomization",
+    "list_named_decisive_check": false
+   },
+   {
+    "key": "scrna",
+    "problem": "Single-cell expression QTL",
+    "list_named_decisive_check": false
+   },
+   {
+    "key": "hic",
+    "problem": "Chromatin-contact loop strength",
+    "list_named_decisive_check": false
+   },
+   {
+    "key": "popgen",
+    "problem": "Admixture dating",
+    "list_named_decisive_check": false
+   }
+  ],
+  "No note (baseline)": {
+   "structural": [
+    true,
+    true
+   ],
+   "multiparent": [
+    false,
+    false
+   ],
+   "crispri": [
+    true,
+    true
+   ],
+   "txr1": [
+    true,
+    false
+   ],
+   "carrier": [
+    false,
+    true
+   ],
+   "mvmr": [
+    true,
+    true
+   ],
+   "scrna": [
+    false,
+    true
+   ],
+   "hic": [
+    false,
+    false
+   ],
+   "popgen": [
+    false,
+    false
+   ]
+  },
+  "Given a list of checks": {
+   "structural": [],
+   "multiparent": [
+    false,
+    true
+   ],
+   "crispri": [
+    true,
+    true
+   ],
+   "txr1": [
+    false,
+    true
+   ],
+   "carrier": [
+    true,
+    true
+   ],
+   "mvmr": [
+    true,
+    true
+   ],
+   "scrna": [
+    false,
+    true
+   ],
+   "hic": [
+    false,
+    false
+   ],
+   "popgen": [
+    false,
+    false
+   ]
+  }
+ }
+}

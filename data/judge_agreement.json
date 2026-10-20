@@ -1,0 +1,70 @@
+{
+ "description": "A stratified random sample of judged replay turns (12 per condition, failure points only) re-scored by a second model judge (Claude Opus 5.5) with the same prompt and criterion as the first (Claude Sonnet 5.5), blind to condition.",
+ "n_turns": 132,
+ "agreements": 117,
+ "percent_agreement": 88.6,
+ "cohen_kappa": 0.733,
+ "first_judge_follow_ups": 39,
+ "second_judge_follow_ups": 42,
+ "answer_informed_turns_agreement": [
+  10,
+  12
+ ],
+ "by_condition_first_second_n": {
+  "No note (baseline)": [
+   1,
+   1,
+   12
+  ],
+  "Maximum reasoning effort": [
+   1,
+   2,
+   12
+  ],
+  "Generic reminder": [
+   2,
+   4,
+   12
+  ],
+  "Self-review prompt": [
+   3,
+   2,
+   12
+  ],
+  "Fresh reader: open question": [
+   3,
+   4,
+   12
+  ],
+  "Fresh reader: assumptions": [
+   0,
+   0,
+   12
+  ],
+  "Fresh reader: largest impact": [
+   4,
+   5,
+   12
+  ],
+  "Fresh readers: all questions": [
+   2,
+   2,
+   12
+  ],
+  "Fresh reader: disagreements": [
+   3,
+   2,
+   12
+  ],
+  "Answer-informed question": [
+   11,
+   11,
+   12
+  ],
+  "Pointer to the output": [
+   9,
+   9,
+   12
+  ]
+ }
+}

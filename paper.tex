@@ -1,0 +1,648 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.95in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx,array}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{microtype}
+\usepackage[font=small,labelfont=bf,labelsep=period,skip=4pt]{caption}
+\usepackage{enumitem}
+\usepackage{libertinus}
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt,leftmargin=1.4em}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\titlespacing*{\subsection}{0pt}{7pt}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+\newcommand{\tabref}[1]{Table~\ref{#1}}
+\newcommand{\sref}[1]{Section~\ref{#1}}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\emergencystretch}{1.5em}
+
+\title{\textbf{Knowing isn't doing: research agents see the\\disproving evidence and move on}}
+\author{Shani Singh\\[2pt]\normalsize Propab AI\\\normalsize\texttt{shani@propabai.com}}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Language-model agents now carry out multi-hour data analyses, and on research benchmarks their answers are
+often wrong. We study why with two methods. First, we traced 104 failed outputs from 16 runs of two computational biology
+benchmarks, produced by three models, to the step in each transcript where the error entered. Second, we replayed 13 of
+those steps with Claude Haiku 5.5 under eleven conditions. In 72\% of the failed GeneBench-Pro answers, the agent had itself
+printed a number that contradicted the answer it later gave. In five case studies, the methodological fact that would
+have prevented the failure was stated correctly when the model was asked directly, outside the task. At the replayed
+steps, more reasoning effort, a generic reminder, a self-review prompt and five variants of a fresh reader did not raise
+the rate at which the agent followed up the contradicting evidence above the baseline interval. A note that only pointed to
+the relevant printed output, without saying what was wrong with it, did raise that rate, and recovered most of the effect
+of a note that stated the question outright. The evidence is consistent with a bottleneck in which of its own results an
+agent examines, rather than in what it knows.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+Agents built on language models can now run long data analyses: they load files, write and execute code over many steps,
+and report a result. Benchmarks of such agents on scientific tasks report low end-to-end success
+\citep{chen2025scienceagentbench,majumder2025discoverybench,mitchener2025bixbench,koch2026bixbench3}. An end-to-end score
+does not say what went wrong. This paper examines the transcripts of failed runs and asks a narrower question: at the step
+where a failed analysis went wrong, what did the agent have in front of it, and what would have changed its next action?
+
+One run illustrates the pattern we study. A DeepSeek V4.1 Flash agent estimating a carrier frequency in a GeneBench-Pro
+problem ran a finer stratification as a robustness check. The check printed 0.2337. The agent's reported estimate was
+0.1553. The agent's next statement was ``Everything checks out'', and it reported the original estimate. Two estimates of
+the same quantity that differ by half are, in most analyses, the most informative result available; here the difference
+was neither explained nor reported.
+
+We find that this pattern is common and that it is not explained by missing knowledge. Our results are as follows.
+\begin{enumerate}
+\item Among 58 failed GeneBench-Pro answer keys, the agent had printed a number contradicting its final answer in 42
+(72\%). Across 104 failed outputs on two benchmarks, the failures we attribute to the agent's analysis fall into three
+classes: a default method applied without a check, an assumption checked only in aggregate, and printed disproving
+evidence that was not acted on (\sref{sec:taxonomy}).
+\item In five case studies, the fact that would have prevented the failure was stated correctly when the model was asked
+directly, and was not applied in the run (\sref{sec:knowing}).
+\item At 13 replayed failure steps, nine interventions that do not use knowledge of the answer, including maximum reasoning
+effort and five kinds of fresh reader, did not raise the follow-up rate above the baseline interval. A note pointing to the
+relevant printed output, with no content about it, raised the rate from 10 of 78 to 51 of 78 samples (\sref{sec:interventions}).
+\end{enumerate}
+
+\paragraph{Contributions.} (i) A transcript-level classification of 104 benchmark failures with two independent
+classification passes and a reported agreement statistic. (ii) Case studies contrasting what models state when asked
+directly with what they do in the run. (iii) A controlled replay study at 13 failure steps that separates pointing an agent
+to evidence from telling it what the evidence means. (iv) A set of recurring self-checking behaviours, each documented as a
+case study with counts. The study covers three models in one agent harness on two benchmarks, with replays on one model; it
+is not a comparison of models or harnesses.
+
+\section{Related work}\label{sec:related}
+
+\paragraph{Agents for data-driven science.} ScienceAgentBench \citep{chen2025scienceagentbench} and DiscoveryBench
+\citep{majumder2025discoverybench} evaluate agents on tasks derived from published analyses. BixBench
+\citep{mitchener2025bixbench} and BixBench3 \citep{koch2026bixbench3} target computational biology, the latter at the scale
+of complete studies from raw data. Systems such as The AI Scientist \citep{lu2024aiscientist} and Biomni
+\citep{huang2025biomni} automate larger parts of the research loop. These works report outcome accuracy; we examine the
+decisions inside failed runs.
+
+\paragraph{Failure taxonomies for agents.} \citet{cemri2025mast} build a taxonomy of failures in multi-agent systems from
+annotated traces, organised around system design, inter-agent coordination and verification. Our classification is
+narrower: single analysis decisions in long data-analysis runs, classified by what the agent had printed and read at the
+step where the error entered.
+
+\paragraph{Self-correction and critique.} Self-Refine \citep{madaan2023selfrefine} and Reflexion \citep{shinn2023reflexion}
+improve outputs through the model's own feedback, and CRITIC \citep{gou2024critic} adds feedback from external tools.
+\citet{huang2024selfcorrect} find that intrinsic self-correction without external feedback does not reliably improve
+reasoning. Process supervision \citep{lightman2023verify} rewards correct intermediate steps. Our self-review and fresh-reader
+conditions belong to this family. Their null effect at our failure steps is consistent with \citet{huang2024selfcorrect}.
+
+\paragraph{Knowledge that is not expressed.} Models carry information about the correctness of their own answers
+\citep{kadavath2022language}, internal representations encode truthfulness that outputs do not always reflect
+\citep{burns2023latent,orgad2025know}, and information in the middle of a long context is used less well than information
+near its ends \citep{liu2024lost}. We report a behavioural analogue: methodological facts stated when asked directly, and
+not used at the step where they would have changed the analysis.
+
+\paragraph{Errors in human analysis.} Three long-studied human failure modes have close counterparts in our data: testing a
+hypothesis only with cases that would confirm it \citep{wason1960}, technical factors aligned with the variable of interest
+\citep{leek2010}, and pooled associations that differ within groups \citep{simpson1951}. We cite them where a finding maps to
+one of them.
+
+\section{Setup}\label{sec:setup}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_design.pdf}
+\caption{Study design. Failed outputs from 16 benchmark runs were traced to the step where each error entered
+(\sref{sec:tracing}); the model requests at 13 of those steps were replayed under controlled conditions
+(\sref{sec:replays}); and the facts that would have prevented five failures were put to the models directly
+(\sref{sec:knowing}).}
+\label{fig:design}
+\end{figure}
+
+\figref{fig:design} summarises the three parts of the study.
+
+\subsection{Agent and runs}
+All runs used one agent harness, in which a model writes and executes code in a sandbox against staged data files, can write
+a plan, can delegate work to sub-agents, can consult method documentation, and receives short notes at turn boundaries. The
+harness imposes no limit on the number of steps or turns. Before attributing any behaviour to a model we audited the
+harness for confounds (output limits, context caching, instructions that discourage additional analysis, and matching of
+outputs during evaluation) and corrected the issues found before running any replay. The classes checked are listed in
+Appendix~\ref{app:confounds}.
+
+\subsection{Benchmarks}
+\textbf{GeneBench-Pro} public case studies: 10 synthetic genomics problems with 30 graded answer keys and tight tolerances.
+Each problem is constructed so that a standard analysis gives a wrong answer unless a specific property of the data is
+noticed. \textbf{BixBench3} \citep{koch2026bixbench3}: reproductions of published computational biology analyses from raw
+data, each output graded against the published artifact. We analyse the 13 of its 20 tasks for which we had a graded run,
+and count an output as failed when its score is below 0.8. \textbf{Our probe set}: problems we constructed outside biology
+(an electrical-load time series, a repeated survey, a reaction-kinetics series) with known defects. We use it only for the
+probes in \sref{sec:knowing} and the reasoning-effort study in \sref{sec:effort}, never to evaluate an intervention.
+
+\subsection{Models}
+The 16 benchmark runs comprise 13 BixBench3 task runs, with GPT-6.1 Sol as the root agent and DeepSeek V4.1 Flash as the
+sub-agent model to which most execution was delegated, and 3 complete GeneBench-Pro runs of 10 problems each: two with
+DeepSeek V4.1 Flash (trials 2 and 3) and one with GPT-6 Astra. Because the BixBench3 root agent delegated execution,
+failures in those runs are attributed to the GPT-6.1 Sol root with DeepSeek V4.1 Flash sub-agents, not to either model alone.
+All replays use Claude Haiku 5.5 with the API's reasoning effort set to high and adaptive thinking. Turns are scored by Claude
+Sonnet 5.5; a sample is re-scored by Claude Opus 5.5 to measure agreement. Each probe names its model.
+
+\subsection{Tracing failures}\label{sec:tracing}
+For each failed output we reproduced the reference value, quantified the difference, and identified the smallest change to
+the agent's own pipeline that removes it. We then read the transcript back to the step where that change should have been
+made and recorded what the agent had printed and read up to that point. Each failure received one primary cause and, where
+present, a contributing cause, from the classes in \figref{fig:taxonomy}. Causes were labelled established when the
+smallest change was reproduced numerically, and probable otherwise (56 and 48 failures). One BixBench3 output was scored
+from an intermediate file rather than the delivered one; it is retained and classed under tooling.
+
+A second, independent pass rebuilt the classification from the same evidence. The two passes agree on 88 of 104 failures
+(Cohen's $\kappa = 0.79$); every disagreement concerns a failure for which two causes are of equal weight, and we report shares
+under both passes. Failures within one problem often share a cause, so we also report shares over cause groups, defined as
+the failures from one run of one problem that share a primary class (48 groups).
+
+\subsection{Failure points and replays}\label{sec:replays}
+A \emph{failure point} is the exact request the original agent sent to its model immediately after the disproving evidence
+appeared in its context. We captured 13 failure points from runs by DeepSeek V4.1 Flash, GPT-6 Astra and the GPT-6.1 Sol
+root (\figref{fig:points}), and three points from runs that passed, which serve as controls. Each request was converted to
+the Anthropic message format with its system prompt, conversation, tool calls, tool results and tool definitions; the
+original model's private reasoning is not available and is not included. Claude Haiku 5.5 then produced the next turn in the
+original agent's place. At baseline it follows up the disproving evidence in 13\% of samples, so the replay preserves the
+failure.
+
+Each condition changes one thing (Appendix Table~\ref{tab:conditions}), and each condition was sampled six times per point.
+A turn \emph{follows up} the evidence when it names the disproving quantity and runs code to investigate it, or states
+concretely what it changes; mentioning it while moving on does not count. The criterion for each point was written from the
+tracing before any replay (Appendix~\ref{app:criteria}). At the control points, a turn counts as \emph{unwarranted rework}
+when its only content re-checks a settled quantity or when it abandons a sound approach on a weak signal. The judge sees the
+turn's text and code, never the condition. On a stratified random sample of 132 judged turns, 12 per condition, a second
+model judge agreed with the first on 117 (88.6\%, Cohen's $\kappa = 0.73$; Appendix~\ref{app:agreement}). Both judges are
+models; no human scoring was performed.
+
+\subsection{Statistics}
+We report counts. Pooled rates over the 13 points carry 95\% intervals from a bootstrap that resamples points (20{,}000
+draws); with 13 clusters these intervals are approximate. Comparisons between two conditions use an exact two-sided sign test
+on the points where they differ and an exact sign-flip permutation test on the per-point differences. We made nine comparisons
+of non-answer-informed conditions against baseline without correction; no claim rests on any single one of them. Where a
+count has fewer than ten samples we give it as $k$ of $n$ without an interval.
+
+\section{Where failures occur}\label{sec:taxonomy}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig2_taxonomy.pdf}
+\caption{Left: primary cause of 104 failed outputs (46 BixBench3 outputs, 58 GeneBench-Pro answer keys) under the two
+classification passes; the band spans them. Right: each square is one failed GeneBench-Pro key, shaded by whether a number
+contradicting the final answer had been printed in the run, as the primary or a contributing cause. Missing knowledge was not
+recorded as a cause in any transcript, but the tracing did not test for it; \sref{sec:knowing} probes it directly.}
+\label{fig:taxonomy}
+\end{figure}
+
+\figref{fig:taxonomy} gives the primary causes. Between 31 and 38\% of failures, depending on the pass, arise where the
+task's wording and the reference's convention disagree, for example on whether a class of reads is counted or which
+annotation release defines the output (Appendix~\ref{app:conventions}). We set these aside, together with tooling failures
+and one failure whose cause was not established. Of the remaining 60 to 70 failures, 53 to 60\% applied a default method where
+the data needed a check first, 24 to 28\% held an assumption to be true in every unit of the data (each chromosome, each
+marker) and checked it only in aggregate, and 16 to 18\% had a disproving number on screen as the primary cause. Over the 31
+cause groups attributed to the agent's analysis, the corresponding shares are 58\%, 19\% and 23\%. State lost over runs of up
+to 37 hours and output-format errors were not found as a primary cause.
+
+The third class understates how often the evidence was present. Counting contributing causes, the agent had printed a number
+contradicting its final answer in 42 of the 58 failed GeneBench-Pro keys (\figref{fig:taxonomy}, right). \tabref{tab:cases}
+lists representative cases with the values the agents printed.
+
+The errors also recur. On two problems, the two DeepSeek V4.1 Flash trials returned numerically identical wrong answers. On the
+admixture-dating problem, both DeepSeek trials, the GPT-6 Astra run and a later Claude Haiku 5.5 run returned the same wrong pair
+of estimates to two decimals. The error therefore recurs across models in the same harness and is not specific to one model's
+weights. This design cannot separate the contribution of the harness from that of the models.
+
+\begin{table}[t]
+\centering\small
+\caption{Representative failures: what the agent itself had printed, what it concluded, and a check whose result would have
+differed had the agent's assumption been wrong. All values are the agents' own printed outputs. BixBench3 failures are
+attributed to the GPT-6.1 Sol root agent with DeepSeek V4.1 Flash sub-agents.}
+\label{tab:cases}
+\begin{tabularx}{\textwidth}{@{}P{2.75cm}P{2.1cm}LLL@{}}
+\toprule
+Problem & Agent & Printed by the agent & What it concluded & A check that could have differed\\
+\midrule
+Carrier frequency & DeepSeek V4.1 Flash, trial 2 & finer-cell reweight 0.2337 against the reported 0.1553 & ``Everything checks out'' & which strata move the estimate\\
+Carrier frequency & DeepSeek V4.1 Flash, trial 3 & stratified variant 0.236 against the chosen 0.119 & ``noisy fine-grained variants excluded'' & same\\
+Treatment effect & DeepSeek V4.1 Flash, trial 2 & adding the activity covariate: risk difference 0.427 against 0.466 & reported a span of variants & adjust for the covariate it had found drives treatment\\
+Structural-variant association & DeepSeek V4.1 Flash, trial 2 & 121 rows of the retained set still disagree; adjusted variant $-0.37$ against $-0.29$ & ``heavy-tailed noise''; estimates ``stable'' & distribution of the reliability field the data dictionary names\\
+CRISPR interference screen & DeepSeek V4.1 Flash, trial 2 & fit with plate terms: $R^2$ 0.992 and coefficient $-0.048$, beside 0.968 and $-0.158$ & kept the fit without plate terms & reconcile the two specifications\\
+Mendelian randomization & DeepSeek V4.1 Flash, trial 2 & residual-correlation permutation $p = 0.014$ & ``no material residual LD structure'' & which instrument blocks carry the residual\\
+Mendelian randomization & GPT-6 Astra & heterogeneity $Q = 6{,}733$ on 40 degrees of freedom & chose an estimator & which instruments drive $Q$\\
+Admixture dating & DeepSeek V4.1 Flash, trials 2 and 3 & per-chromosome ancestry fractions of one haplotype, 0.79, 0.48, 0.21, 0.81 & leave-one-out estimates read as ``stable'' & compare the chromosomes directly\\
+Chromatin-contact loop strength & DeepSeek V4.1 Flash, trial 3 & 8 of the top 11 case pixels form a block absent in controls & ``essentially unbiased'' background & exclude the block from the background\\
+Single-cell expression QTL & GPT-6 Astra & minimum ambient-RNA fraction by genotype 0.08, 0.08, 0.24 & additive ambient term only & genotype contrast within low-contamination donors\\
+RNA-seq read counting & BixBench3 task 12 & \texttt{all\_zero\_loci: 587} of 5,126 & no remark & list the loci with no counts\\
+Gene Ontology summary & BixBench3 task 16 & 170 of 250 genes carry only the root term & ``sparse annotation'' & look up the annotation of a well-studied gene\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Knowledge and its use}\label{sec:knowing}
+
+If these failures reflected missing knowledge, the relevant fact should also be missing when the model is asked directly. In
+five case studies it was not (\tabref{tab:probes}). Each probe gave the model only the facts the agent had on screen, or the
+methodological question, without the task context, and asked what to check. The run measure differs by probe and is stated
+per row; the samples are small and the rows are not pooled.
+
+\begin{table}[t]
+\centering\small
+\caption{Knowledge probes. Asked directly: the model is given the facts or the question outside the task. In the run: what
+the agent did at the corresponding point. Counts are samples; where the two columns use different models, both are named.}
+\label{tab:probes}
+\begin{tabularx}{\textwidth}{@{}P{3.3cm}LL@{}}
+\toprule
+Problem & Asked directly & In the run\\
+\midrule
+Repeated survey (our probe set) & Claude Haiku 5.5 stated that a 1 to 5 range check cannot detect a reversed scale in 10 of 10 samples & 3 of 5 live Claude Haiku 5.5 runs chose a check able to detect the reversal\\
+Electrical-load time series (our probe set) & Claude Haiku 5.5 raised the time convention of the timestamps in 10 of 10 samples & 9 of 30 first replies at the decision point split the hourly profile by period (Claude Haiku 5.5)\\
+Admixture dating (GeneBench-Pro) & GPT-6.1 Sol stated that phase labels need not identify the same parent on every chromosome in 3 of 3 samples & 0 of 3 runs (DeepSeek V4.1 Flash, two trials; GPT-6 Astra) compared the per-chromosome values they had printed\\
+Reaction kinetics (our probe set) & GPT-6.1 Sol gave a typical rate increase of 1.3 to 1.7 times per 5\,$^\circ$C in 3 of 3 samples & 0 of 4 GPT-6.1 Sol runs revised the stated units after an 87-fold jump between adjacent temperatures\\
+DamID target calling (BixBench3 task 1) & GPT-6.1 Sol computed about 0.15 reads per fragment from the input sizes and called the data sparse in 3 of 3 samples & 0 of 3 GPT-6.1 Sol plans combined the read count and the fragment count, which they stated separately\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Two observations from these probes bear on mechanism. In the reaction-kinetics probe, the model wrote in its plan that the
+activation energy's magnitude ``cannot be estimated'' before all temperatures were loaded, although it gives a tight typical
+range when asked. In the DamID probe, the plan stated the read count and the fragment count in different steps and did not
+relate them. In both cases the knowledge was available when the question was posed and was not retrieved while the agent was
+planning or executing.
+
+\section{Interventions at failure points}\label{sec:interventions}
+
+\subsection{Conditions}
+We compared eleven conditions at each failure point (Appendix Table~\ref{tab:conditions}). Nine use no knowledge of the
+answer: the baseline; maximum reasoning effort; a generic reminder (``is there anything in what you have computed so far that
+you have not yet accounted for?''); a prompt asking the agent to pose and answer a reviewer's question about its last output;
+and five fresh readers, separate model calls that see the task and the latest output and return one question (an open question,
+a question about the analysis's assumptions, about the discrepancy with the largest effect on the answer, about disagreements
+printed in the output, and all three of the last as a list). Two conditions use knowledge of the answer. A \emph{pointer} names
+the relevant printed output by the agent's own label and says nothing about it, for example ``look again at the fine-cell reweight
+partner line in the output you just got.'' An \emph{answer-informed question} states the question an analyst who knew the error
+would ask, for example ``your finer-cell reweighting gave 0.2337 while your reported partner frequency is 0.1553: which one is
+right, and which strata drive the difference?'' Both are written from the tracing and are measuring devices, not deployable
+interventions: the answer-informed question is an upper bound on what any question-raising intervention could achieve at these
+points, and the pointer is an upper bound on what selecting the right output alone could achieve.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_interventions.pdf}
+\caption{Claude Haiku 5.5 replies at 13 failure points, 6 samples per point and condition (78 per condition). Bands are 95\%
+bootstrap intervals over points. Right: unwarranted rework at three control points from passing runs, 6 samples each. The control
+points have no disproving output, so the pointer was not run there, and under the answer-informed condition they receive the
+generic reminder; the one rework sample in that row was produced under the reminder.}
+\label{fig:interventions}
+\end{figure}
+
+\subsection{Results}
+At baseline the agent followed up the disproving evidence in 10 of 78 samples (\figref{fig:interventions}). The nine conditions
+that use no knowledge of the answer gave between 9 and 18 of 78, and every one of their intervals contains the baseline rate.
+The best of them, the reader limited to printed disagreements, was above baseline at 5 points, below at 1 and tied at 7 (sign test
+$p = 0.22$). None of these conditions produced unwarranted rework at the control points (0 of 18 each, which does not exclude
+rates up to 18\%).
+
+The pointer raised the follow-up rate to 51 of 78. It was above baseline at 12 of 13 points and tied at one (sign test and
+permutation test, both $p = 0.0005$), and above the best fresh reader at 9 points, below at 1 and tied at 3 (sign test $p = 0.02$,
+permutation test $p = 0.006$). The answer-informed question reached 67 of 78 and was above the pointer at 9 points, below at 2 and
+tied at 2 (sign test $p = 0.07$, permutation test $p = 0.13$). Measured from baseline, the pointer recovered 72\% of the
+answer-informed question's increase (41 of 57 samples). \figref{fig:points} gives the counts per point. The pointer was weakest
+where the disproving quantity is not printed as a single value: at the QTL point it named an aggregate concordance (0 of 6), and at
+the CRISPR-screen point a table of correlations (1 of 6).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig4_points.pdf}
+\caption{Samples of 6 that followed up the disproving evidence, by failure point and condition. Rows name the problem, the
+benchmark and the model whose run produced the point; all replies are by Claude Haiku 5.5. The answer-informed count at the carrier
+point (2 of 6) reflects the criterion's requirement of a resolution within one turn; on reading, all six samples began decomposing the
+two estimates by stratum.}
+\label{fig:points}
+\end{figure}
+
+The fresh readers' questions were usually reasonable but concerned a different issue than the disproving one. At the Mendelian
+randomization point (DeepSeek run) they asked about the definition of a standard deviation rather than the residual correlation;
+at the admixture point, about the choice between two dating estimators rather than the per-chromosome fractions; at the read-counting
+point, about an asymmetry between two conditions rather than the 587 loci with no counts. Each output carries several real
+discrepancies, and a reader that sees only the output tends to select one that is not the error. When a reader did ask the disproving
+question, at the treatment-effect point under the disagreement reader (6 of 6), the follow-up rate matched the answer-informed
+question's.
+
+\subsection{Interpretation}
+Write the follow-up probability at point $m$ under condition $c$ as
+\begin{equation}
+\Pr(F_m \mid c) = s_c(m)\, u(m) + \bigl(1 - s_c(m)\bigr)\, b(m),
+\label{eq:decomp}
+\end{equation}
+where $s_c(m)$ is the probability that condition $c$ directs the agent to the disproving evidence, $u(m)$ the probability that it
+follows up once directed, and $b(m)$ the probability that it follows up otherwise. The decomposition rests on an assumption we did
+not test: that $u(m)$ does not depend on how the agent was directed. Under it, the answer-informed condition estimates $u$ at about
+0.86, and the fresh readers' implied values of $s_c$ lie between 0 and 0.14, each with an interval that includes zero. The pointer
+result constrains the interpretation without relying on the assumption. A note that carries no information about what is wrong,
+only where to look, recovers most of the effect of one that states the problem. At these points the agent largely did the rest of
+the work once its attention was on the right output. The evidence is therefore consistent with a bottleneck in which of its own
+outputs the agent examines, rather than in what it knows or whether it acts. It does not show how to select that output without
+knowing the answer, which is the open problem.
+
+Two further measurements, on fewer samples, are in Appendix~\ref{app:multiturn}. Over six turns, all three readers' questions
+delivered together helped where the evidence was a printed disagreement and not where it was an assumption held as given. A list
+of checks written by a fresh model call at the agent's first look at the data, which named the decisive check for four of nine
+problems, did not change the outcome when the runs were continued to the end (9 of 16 forks against 9 of 18).
+
+\subsection{Reasoning effort on one problem}\label{sec:effort}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig5_effort.pdf}
+\caption{Electrical-load time series from our probe set. Left: 15 Claude Haiku 5.5 forks per effort schedule, and 10 Claude Sonnet
+5.5 forks, from the turn after the agent found a 28-row gap, continued to the end and graded by the problem's grader. Right: effort
+high against maximum on the first reply at that turn (30 samples per level), on the graded outcome, and at the 13 failure points of
+\figref{fig:interventions}. Median visible reasoning on the first reply: 761 characters at high, 1,579 at maximum.}
+\label{fig:effort}
+\end{figure}
+
+In the load series, timestamps after one date are shifted by seven hours; the shift appears as 28 missing rows on that date and 28
+rows past the end of the year, in the same hours. On this single problem the reasoning budget at the decision turn decided the
+outcome (\figref{fig:effort}). With effort high throughout, 1 of 15 forks was graded correct; with maximum effort throughout, 12 of
+15; with high effort on the first reply and maximum afterwards, 15 of 15. Claude Sonnet 5.5 at effort high passed 9 of 10. At high
+effort, first replies took the task's statement that there is no daylight-saving change as settling the time base and computed the
+answer; at maximum effort, all 30 replies named the coincidence between the gap and the overhang and proposed several hypotheses
+about the time base, each of which led to a check that split the data by period. At the 13 failure points, by contrast, maximum
+effort gave 9 of 78 against 10 of 78. On this evidence, more reasoning helped on one problem where several hypotheses led to the same
+partitioning check, and did not help at points where the agent already had several candidate issues in view.
+
+\section{Recurring self-checking behaviours}\label{sec:checking}
+
+This section documents six behaviours as case studies, each with the problems and models in which we observed it. Several were
+observed in only one problem; the counts are small, and the behaviours are offered as descriptions, not estimates of prevalence.
+
+\subsection{Checks that could not have failed}
+A check is informative about an assumption to the extent that its result would differ if the assumption were false. Many checks in
+the failed runs had no such power (\tabref{tab:checks}). In the repeated survey, a reversed wave maps each response $x$ on the 1 to 5
+scale to $6 - x$. A range check passes either way. The correlation of the reversed item with the other items in that wave changes sign,
+so a within-wave correlation check would have detected it; the agent stated both facts when asked directly (\tabref{tab:probes}) and ran
+the range check. The other checks in \tabref{tab:checks} share the decision they were meant to test: a bootstrap resamples within the
+chosen specification, and two pipeline variants that apply the same exclusion agree. This is the pattern \citet{wason1960} described
+in people testing a rule only with cases that would confirm it.
+
+\begin{table}[t]
+\centering\small
+\caption{Checks that could not have failed: the assumption each failing run relied on, the check it ran, why that check would pass
+whether or not the assumption held, and a check that would not.}
+\label{tab:checks}
+\begin{tabularx}{\textwidth}{@{}P{3.0cm}LLL@{}}
+\toprule
+Problem (agent) & Check the agent ran & Why it could not fail & A check that could\\
+\midrule
+Repeated survey (Claude Haiku 5.5) & every response lies in 1 to 5 & a reversal maps the scale onto itself & item correlations within each wave\\
+Electrical-load series (Claude Haiku 5.5) & hourly profile pooled over the year & the unshifted months dominate the pooled shape & profiles before and after the gap\\
+Admixture dating (DeepSeek V4.1 Flash) & leave-one-chromosome-out estimates & a disagreeing chromosome becomes a wider standard error & per-chromosome values side by side\\
+QTL mapping, multiparent cross (GPT-6 Astra) & mean held-out concordance & a few failing markers vanish in the mean & concordance marker by marker\\
+RNA-seq read counting (BixBench3 task 12) & two pipeline variants give identical counts & both apply the same exclusion & the default pipeline on a subset, compared\\
+CRISPR interference screen (DeepSeek V4.1 Flash) & bootstrap interval of the chosen fit & resamples within one specification & fit the alternative specification\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Predictions widened until they could not fail}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig7_predictions.pdf}
+\caption{Left: target-gene counts per replicate predicted by GPT-6.1 Sol in two plans for BixBench3 task 1, the typical range it gives
+when asked directly, and the agent's own result. Right: the per-5\,$^\circ$C rate ratio GPT-6.1 Sol gives when asked directly, against
+the 87-fold jump in the reaction-kinetics probe's data. Three plans or samples per wording.}
+\label{fig:predictions}
+\end{figure}
+
+A prediction stated before computing is what makes a result surprising. Asked in a plan for the expected result of each step, GPT-6.1
+Sol gave the output's shape (``85 columns, 1,144 rows''). Asked for a magnitude, it gave target-gene counts of 1,000 to 20,000 and 100
+to 20,000 and called each ``deliberately broad''; the agent's result, 3,594 to 6,904, lies inside both (\figref{fig:predictions}). Asked
+for a narrow prediction, it gave only quantities fixed by the task, such as counts of columns and degrees of freedom. Across five wordings
+of the request, three plans each, no plan stated a prediction that the defect could have contradicted. The same request made at the start
+of the step itself, to DeepSeek V4.1 Flash sub-agents executing the step, produced tight typical ranges (3 of 3 samples) and, in 9 of 9
+samples, a description of what the output would look like if the data carried no signal.
+
+\subsection{Lenient comparison with one's own prediction}
+When a sub-agent's own prediction was returned to it beside its result, it judged agreement leniently. With a prediction of $10^2$ to $10^3$
+peaks per replicate and a result of 1,605 to 1,747, all three samples described the result as within or at the upper end of the
+prediction (DeepSeek V4.1 Flash sub-agent, BixBench3 task 1). With a narrower prediction of tens to a few hundred, two of three samples
+said the result was an order of magnitude above it; asked to test reproducibility where the numbers disagreed, two of three then cited the
+looser of two bounds in their own note and passed the result. The returned prediction did reliably cause the agent to compute the check it
+had named (5 of 6 and 6 of 6 samples in two rounds). The comparison was lenient; the computation was not.
+
+\subsection{Disagreeing estimates reported as a range}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig6_timing.pdf}
+\caption{Twelve failed GeneBench-Pro runs, each from its first transcript step to its answer (step count at right), with the steps at which
+the agent printed the disproving number (\tabref{tab:cases}). Step indices were located by searching each transcript for the printed value.}
+\label{fig:timing}
+\end{figure}
+
+When two of its own estimates of one quantity disagreed, the agent tended to report a span and keep the first estimate. In DeepSeek V4.1
+Flash trial 3, the partner frequency was reported as ``0.117 to 0.146 across alternative weightings'', omitting the 0.236 printed in the same
+table; the single-cell analysis listed variants that omitted the printed $-0.62$ and $-0.55$; and the treatment-effect analysis chose the
+sparsest specification by an information criterion over four printed alternatives and reported the estimate as ``robust across model
+specifications''. In all three cases the omitted
+estimate was closer to the reference value. These runs did not run out of steps. In the twelve runs of \figref{fig:timing}, the first print of
+the disproving number came with a median of 59\% of the run's steps still ahead (range 31 to 82\%).
+
+\subsection{A pooled estimate absorbed the unit that disagreed}
+When an assumption fails in one unit of several, a pooled estimate absorbs the failure. At the admixture point, Claude Haiku 5.5 printed the
+ancestry fraction of each of two haplotypes on each of four chromosomes (0.79, 0.49, 0.21, 0.81 and 0.55, 0.02, 0.88, 0.41). Treating
+``sampling noise'' as a hypothesis gives a test the agent could have run on that table. If the labels are inverted on one chromosome,
+relabelling that chromosome should reduce the spread across chromosomes in both haplotypes at once; under noise, no single relabelling should
+stand out. Of the four single-chromosome relabellings, only that of the third chromosome reduces the summed standard deviation, from 0.640 to
+0.401; the others leave it at 0.55 or above. With four units the test is weak, but it is one computation on a table the agent had already
+printed. Told to compute the table, Claude Haiku 5.5 did so in 10 of 10 forks and kept the pooled answer in 10 of 10, describing the spread as
+``real heterogeneity''. The pattern resembles the reversal of pooled associations within groups described by \citet{simpson1951}.
+
+\subsection{Descriptions of good practice did not trigger checks}
+Text describing good practice did not change behaviour at the moments it addressed. Removing instructions that discouraged unrequested
+diagnostics did not change the follow-up rate at failure points from the original runs (1 of 15 against 3 of 15, original models). A sentence
+encouraging tests raised the share of first replies that split the load profile by period from 9 to 17 of 30 but left the graded outcome at 1
+of 15 (Claude Haiku 5.5). In one admixture-dating run (DeepSeek V4.1 Flash, trial 3), a method document in the agent's context stated that a
+date driven by one chromosome should be treated as a warning; the agent printed the per-chromosome values and did not compare them.
+
+\section{Discussion}\label{sec:discussion}
+
+The following account is offered as a hypothesis consistent with the measurements, not as an established mechanism. During a run, agents
+appear to treat computed results as outputs to report rather than as observations to interpret: a printed number that contradicts the headline
+is filed, not investigated. The checks an agent chooses are generated from its current model of the data, so they vary that model's
+parameters and rarely test its premises (\tabref{tab:checks}). Predictions made while planning are widened until they cannot be contradicted,
+which removes the expectation against which a result would be surprising (\figref{fig:predictions}). An adequate explanation, such as
+``noise'' or ``real heterogeneity'', ends the inquiry. The intervention results fit this account: content about the error was largely
+unnecessary, and direction to the relevant output was largely sufficient (\figref{fig:interventions}).
+
+For the design of research agents, the results suggest that the scarce operation is choosing which of the agent's own outputs to re-examine.
+Generic reminders, more reasoning, self-review and fresh readers that see only the latest output did not perform that choice at our failure
+points. Approaches that let the agent record an expected result before computing, and return that record beside the result, address part of
+the problem; our measurements show that the agent computes the check it recorded, but also that its recorded predictions are often too wide to
+be contradicted. Whether such mechanisms close the gap measured here, without causing rework on sound analyses, requires evaluation on problems
+not used to design them.
+
+\section{Limitations}\label{sec:limits}
+\begin{itemize}
+\item \textbf{The failure points are in-sample.} All 13 points were studied before the conditions were designed. The pointer and the
+answer-informed question were written with knowledge of the error, so they bound what selection and full guidance could achieve; neither is a
+method. No condition was evaluated on held-out problems.
+\item \textbf{The pointer was not run at the control points.} Its rate of unwarranted rework on sound analyses is unknown, and a pointer to an
+arbitrary output in a sound analysis may cause rework.
+\item \textbf{Replays put one model in another's context.} Claude Haiku 5.5 answers in place of DeepSeek V4.1 Flash, GPT-6 Astra and GPT-6.1
+Sol agents, without their private reasoning. Haiku also usually fails to follow up at baseline (13\%), so the replay preserves the failure, but it
+is not the original agent.
+\item \textbf{One turn is short.} Most replays measure the next turn only; the multi-turn and early-list forks cover four and nine problems.
+\item \textbf{Scoring and classification are by models.} Two model judges agree on 88.6\% of a stratified sample ($\kappa = 0.73$), and two
+classification passes agree on 85\% of failures ($\kappa = 0.79$). Neither was validated against human annotation, and under the answer-informed
+condition the agent's reply often quotes the note, which can reveal the condition to the judge.
+\item \textbf{Small samples.} Most cells hold 3 to 6 samples, and the pooled rates rest on 13 points; bootstrap intervals with 13 clusters are
+approximate. The knowledge probes use 3 to 30 samples each and different models on the two sides of some rows.
+\item \textbf{Scope.} Three models, one harness, two benchmarks concentrated in genomics, and synthetic problems in GeneBench-Pro. Harness and
+model effects are not separable in this design.
+\item \textbf{Classification depends on reading.} Shares move by up to ten percentage points between the two passes; we report both.
+\end{itemize}
+
+\section{Conclusion}\label{sec:conclusion}
+In 104 failures of long data analyses by three models on two benchmarks, the agent had often already printed the number that contradicted its
+answer, and the relevant methodological facts were available when the models were asked directly. At 13 replayed failure steps, interventions
+that did not use knowledge of the answer did not change behaviour, while a note that only pointed to the relevant output recovered most of the
+effect of stating the problem. These results locate a measurable gap between what the agents know and what they examine. Closing it requires a
+way to select the output worth re-examining without knowing the answer, evaluated on problems not used to design it.
+
+\section*{Competing interests}
+The author is the founder of Propab AI, which develops the agent harness used for every run in this study.
+
+\section*{Funding}
+This work was funded by Propab AI, which also paid for all model usage.
+
+\section*{Data availability}
+Released at \url{https://github.com/shani-singh1/knowing-isnt-doing}: the scripts that produce every figure and derived number, the per-sample
+outcome counts for every replay condition, the failure classification table with both passes, the intervention and criterion texts, and a script
+that checks every number in this paper against those counts. Not released: benchmark run transcripts and the captured model requests, which
+contain benchmark inputs and outputs.
+
+\begin{thebibliography}{99}\setlength{\itemsep}{1pt}\small
+\bibitem[Burns et~al.(2023)]{burns2023latent} C.~Burns, H.~Ye, D.~Klein, and J.~Steinhardt. Discovering latent knowledge in language models
+without supervision. In \emph{ICLR}, 2023. arXiv:2212.03827.
+\bibitem[Cemri et~al.(2025)]{cemri2025mast} M.~Cemri et~al. Why do multi-agent LLM systems fail? In \emph{NeurIPS}, 2025. arXiv:2503.13657.
+\bibitem[Chen et~al.(2025)]{chen2025scienceagentbench} Z.~Chen, S.~Chen, Y.~Ning, et~al. ScienceAgentBench: Toward rigorous assessment of
+language agents for data-driven scientific discovery. In \emph{ICLR}, 2025. arXiv:2410.05080.
+\bibitem[Gou et~al.(2024)]{gou2024critic} Z.~Gou, Z.~Shao, Y.~Gong, Y.~Shen, Y.~Yang, N.~Duan, and W.~Chen. CRITIC: Large language models can
+self-correct with tool-interactive critiquing. In \emph{ICLR}, 2024. arXiv:2305.11738.
+\bibitem[Huang et~al.(2024)]{huang2024selfcorrect} J.~Huang, X.~Chen, S.~Mishra, H.~S. Zheng, A.~W. Yu, X.~Song, and D.~Zhou. Large language
+models cannot self-correct reasoning yet. In \emph{ICLR}, 2024. arXiv:2310.01798.
+\bibitem[Huang et~al.(2025)]{huang2025biomni} K.~Huang et~al. Biomni: A general-purpose biomedical AI agent. bioRxiv
+10.1101/2025.05.30.656746, 2025.
+\bibitem[Kadavath et~al.(2022)]{kadavath2022language} S.~Kadavath, T.~Conerly, A.~Askell, et~al. Language models (mostly) know what they know.
+arXiv:2207.05221, 2022.
+\bibitem[Koch et~al.(2026)]{koch2026bixbench3} Z.~Koch et~al. BixBench3: Benchmarking AI agents on research-study-scale computational biology
+tasks. arXiv:2608.25286, 2026.
+\bibitem[Leek et~al.(2010)]{leek2010} J.~T. Leek, R.~B. Scharpf, H.~C. Bravo, et~al. Tackling the widespread and critical impact of batch effects in
+high-throughput data. \emph{Nature Reviews Genetics}, 11(10):733--739, 2010.
+\bibitem[Lightman et~al.(2024)]{lightman2023verify} H.~Lightman et~al. Let's verify step by step. In \emph{ICLR}, 2024. arXiv:2305.20050.
+\bibitem[Liu et~al.(2024)]{liu2024lost} N.~F. Liu, K.~Lin, J.~Hewitt, A.~Paranjape, M.~Bevilacqua, F.~Petroni, and P.~Liang. Lost in the middle:
+How language models use long contexts. \emph{Transactions of the ACL}, 12:157--173, 2024.
+\bibitem[Lu et~al.(2024)]{lu2024aiscientist} C.~Lu, C.~Lu, R.~T. Lange, J.~Foerster, J.~Clune, and D.~Ha. The AI Scientist: Towards fully
+automated open-ended scientific discovery. arXiv:2408.06292, 2024.
+\bibitem[Madaan et~al.(2023)]{madaan2023selfrefine} A.~Madaan, N.~Tandon, P.~Gupta, et~al. Self-Refine: Iterative refinement with self-feedback.
+In \emph{NeurIPS}, 2023. arXiv:2303.17651.
+\bibitem[Majumder et~al.(2025)]{majumder2025discoverybench} B.~P. Majumder, H.~Surana, D.~Agarwal, et~al. DiscoveryBench: Towards data-driven
+discovery with large language models. In \emph{ICLR}, 2025. arXiv:2407.01725.
+\bibitem[Mitchener et~al.(2025)]{mitchener2025bixbench} L.~Mitchener, J.~M. Laurent, et~al. BixBench: A comprehensive benchmark for LLM-based
+agents in computational biology. arXiv:2503.00096, 2025.
+\bibitem[Orgad et~al.(2025)]{orgad2025know} H.~Orgad, M.~Toker, Z.~Gekhman, R.~Reichart, I.~Szpektor, H.~Kotek, and Y.~Belinkov. LLMs know more
+than they show: On the intrinsic representation of LLM hallucinations. In \emph{ICLR}, 2025. arXiv:2410.02707.
+\bibitem[Shinn et~al.(2023)]{shinn2023reflexion} N.~Shinn et~al. Reflexion: Language agents with verbal reinforcement learning. In
+\emph{NeurIPS}, 2023. arXiv:2303.11366.
+\bibitem[Simpson(1951)]{simpson1951} E.~H. Simpson. The interpretation of interaction in contingency tables. \emph{Journal of the Royal Statistical
+Society B}, 13(2):238--241, 1951.
+\bibitem[Wason(1960)]{wason1960} P.~C. Wason. On the failure to eliminate hypotheses in a conceptual task. \emph{Quarterly Journal of Experimental
+Psychology}, 12(3):129--140, 1960.
+\end{thebibliography}
+
+\appendix
+\renewcommand{\thetable}{A\arabic{table}}
+\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+
+\section{Conditions}\label{app:conditions}
+\begin{table}[h]
+\centering\small
+\caption{Conditions at the failure points. Notes are appended after the last tool result as a bracketed system line. Reader questions
+are generated per sample by a separate Claude Haiku 5.5 call and delivered as ``A reviewer who read only the task and your last output
+asks: \ldots''; a reader that answers NONE adds nothing.}
+\label{tab:conditions}
+\begin{tabularx}{\textwidth}{@{}P{3.6cm}L@{}}
+\toprule
+Condition & What changes\\
+\midrule
+No note (baseline) & nothing; reasoning effort high\\
+Maximum reasoning effort & effort maximum, output limit 64,000 tokens\\
+Generic reminder & ``Before you continue: is there anything in what you have computed so far that you have not yet accounted for?''\\
+Self-review prompt & ``Before you continue: what is the one question a careful reviewer would ask about the output you just got, before letting you build on it? Ask it, then answer it from the data.''\\
+Fresh reader: open question & a separate call sees the task, the last code and its output, and asks the single most important question before building on it\\
+Fresh reader: assumptions & a separate call sees the task, all code and the last output, lists what the analysis takes as given, and asks for the observation that would show the likeliest false and consequential assumption is false\\
+Fresh reader: largest impact & a separate call collects evidence in the output that disagrees with the analysis and asks about the item that would change the answer most\\
+Fresh reader: disagreements & a separate call looks only for disagreement printed in the output (two estimates of one quantity, a misfit diagnostic, failing units, a part that disagrees with the rest)\\
+Fresh readers: all questions & the questions of the three preceding readers, as one numbered list\\
+Pointer to the output & ``Before you continue, look again at \emph{label} in the output you just got'', where \emph{label} is the agent's own printed label for the disproving output\\
+Answer-informed question & the question an analyst who knew the error would ask, written from the tracing\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Follow-up criteria}\label{app:criteria}
+Fixed before any replay. Admixture dating: compares the ancestry fraction per haplotype per chromosome, or questions whether labels are
+consistent across chromosomes. Chromatin-contact loop strength: investigates the case-only block of high pixels or the relation of coverage to
+GC content, or excludes the block from the background model. Mendelian randomization, residual correlation: treats the permutation result as a
+sign that the instrument model is wrong. Mendelian randomization, heterogeneity: treats $Q$ as evidence that the model is wrong and finds which
+instruments drive it. QTL mapping: computes held-out concordance per marker. Carrier frequency: names both estimates and works out which is right.
+Read counting: asks which loci have no counts and why. Treatment effect: asks why adjusting for the covariate moves the estimate.
+Structural-variant association: asks why the adjustment moves the estimate. Gene Ontology summary: treats the root-only genes as a possible defect
+in its own lookup and tests it. Single-cell expression QTL: tests contamination by genotype beyond an additive term. CRISPR interference screen:
+tests dependence on GC content beyond a linear term, or by plate, among the guides where GC tracks knockdown.
+
+\section{Confound audit}\label{app:confounds}
+Before any replay we checked, and where needed corrected, the following classes of harness effect: limits on model output length, including
+whether reasoning tokens count against them; prompt-cache behaviour and token accounting; whether reasoning content is carried between turns;
+instructions in the system prompt or in delegation briefs that discourage additional analysis; whether a failed or interrupted code cell is
+reported to the agent; and how evaluation matches delivered files to required outputs.
+
+\section{Disagreements between task wording and reference convention}\label{app:conventions}
+Examples, without answer values. BixBench3 task 12: the task instructs that reads mapping to multiple genomic locations are not counted; the
+reference counts at multi-copy loci are consistent with such reads having been counted. BixBench3 task 10: the output universe follows an
+annotation release; the task names no release, and the reference corresponds to an earlier release than the one retrieved at run time.
+GeneBench-Pro structural-variant association: equally defensible constructions of the dosage variable give estimates spread over a range wider than
+the grading tolerance. GeneBench-Pro chromatin-contact loop strength: the control estimate varies across defensible specifications of the expected
+background by more than the tolerance.
+
+\section{Agreement}\label{app:agreement}
+\textbf{Classification.} The two passes assign the same primary class to 88 of 104 failures (Cohen's $\kappa = 0.79$). The 16 disagreements are
+failures whose tracing names two causes of equal weight: 11 assigned to the default-method class by one pass and to the wording-and-convention class
+by the other, 4 assigned to the wording-and-convention class by one pass and to tooling by the other, and 1 left unattributed by one pass.
+\textbf{Judging.} On 132 turns sampled at random, 12 from each condition, the second judge agrees with the first on 117 (88.6\%, $\kappa = 0.73$). The
+first judge scored 39 of the 132 as following up and the second 42; per condition the two counts differ by at most two. On the 12 answer-informed turns
+the judges agree on 10.
+
+\section{Multi-turn and early forks}\label{app:multiturn}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/figA1_multiturn.pdf}
+\caption{Left: six-turn forks from four failure points, three per arm (two for one answer-informed arm), judged on whether any turn followed up.
+Right: forks from the first look at the data in nine GeneBench-Pro problems, two per arm, continued to the end, with and without a list of up to
+five checks written by a separate call that saw only the task and the data so far. Ticks mark problems where the list named the decisive check. One
+arm with the list failed to run.}
+\label{fig:multiturn}
+\end{figure}
+
+\end{document}
