@@ -41,5 +41,31 @@ TASK1 = {
 }
 ARRHENIUS = {"bare recall": (1.3, 1.7), "observed": 87.0}
 
-# Per-(haplotype, chromosome) ancestry fractions printed by Claude Haiku 5.5 at the admixture-dating failure point.
-POPGEN = {"h1": [0.79, 0.49, 0.21, 0.81], "h2": [0.55, 0.02, 0.88, 0.41]}
+# Knowledge probes: the same model asked directly, outside the task (asked: samples stating the fact), against what it
+# did at the corresponding point in its run or in the replay of that point (run: samples or runs using it).
+PROBES = [
+    {"problem": "Repeated survey", "model": "Claude Haiku 5.5", "asked": (10, 10), "run": (3, 5),
+     "asked_what": "a 1 to 5 range check cannot detect a reverse-coded item",
+     "run_what": "live runs at the same settings that detected the reversal (the other 2 ran the range check)"},
+    {"problem": "Electrical-load series", "model": "Claude Haiku 5.5", "asked": (10, 10), "run": (9, 30),
+     "asked_what": "raised the time convention of the timestamps",
+     "run_what": "first replies at the decision turn that split the hourly profile by period (replay)"},
+    {"problem": "Admixture dating", "model": "Claude Haiku 5.5", "asked": (3, 3), "run": (1, 12),
+     "asked_what": "check the chromosomes before pooling",
+     "run_what": "baseline replies at the two admixture failure points that compared them (replay)"},
+    {"problem": "Carrier frequency", "model": "Claude Haiku 5.5", "asked": (3, 3), "run": (2, 6),
+     "asked_what": "a check that moves the estimate by half must be explained first",
+     "run_what": "baseline replies at the carrier failure point that did so (replay)"},
+    {"problem": "Reaction kinetics", "model": "GPT-6.1 Sol", "asked": (3, 3), "run": (0, 4),
+     "asked_what": "a typical rate ratio of 1.3 to 1.7 per 5 degrees",
+     "run_what": "runs that revised the units after an 87-fold jump"},
+    {"problem": "DamID target calling", "model": "GPT-6.1 Sol", "asked": (3, 3), "run": (0, 3),
+     "asked_what": "about 0.15 reads per fragment: the data are sparse",
+     "run_what": "plans that combined the read and fragment counts"},
+]
+
+# Per-(haplotype, chromosome) ancestry fractions printed by Claude Haiku 5.5 in the forks told to compute them (four
+# of the ten forks printed four decimals, the other six the same values to three). DeepSeek V4.1 Flash trial 2
+# printed its own table, h1 0.7911, 0.4823, 0.2128, 0.8133 and h2 0.5583, 0.0237, 0.8786, 0.4185, which the paper does
+# not use.
+POPGEN = {"h1": [0.7934, 0.4882, 0.2107, 0.8154], "h2": [0.5519, 0.0234, 0.8798, 0.4139]}

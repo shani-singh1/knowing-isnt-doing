@@ -35,3 +35,11 @@ Does the turn meet the criterion? Answer on the first line with exactly YES or N
 ```
 
 The judge sees only the turn's text and the code it ran; the condition is not shown.
+
+## Sensitivity scoring at the carrier point
+
+The same judge, prompt and criterion, with this block inserted before the turn: "The note the agent received immediately before this turn (shown only so that references in the turn can be resolved; the criterion is unchanged): <note>...</note>". The scores in the main results are the original ones; this scoring is reported in Appendix D.
+
+## Second classification rater
+
+Claude Sonnet 5.5, effort high, given the tracing reports with their class labels removed, the class definitions of Section 4 and the list of failed outputs, and asked for one primary class per output from the reports' evidence alone. It did not see the primary classification.

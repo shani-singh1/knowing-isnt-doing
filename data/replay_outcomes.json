@@ -9,6 +9,7 @@
   "Fresh reader: largest impact",
   "Fresh readers: all questions",
   "Fresh reader: disagreements",
+  "Pointer to another output",
   "Pointer to the output",
   "Answer-informed question"
  ],
@@ -1268,6 +1269,136 @@
     false
    ]
   },
+  "Pointer to another output": {
+   "admixture-dating/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "admixture-dating/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "chromatin-contact-loop/deepseek": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
+   "mendelian-randomization-residual/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "mendelian-randomization-heterogeneity/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "qtl-multiparent/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "carrier-frequency/deepseek": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    false
+   ],
+   "rnaseq-read-counting/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "treatment-effect/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "structural-variant/deepseek": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "gene-ontology-summary/sol": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "single-cell-eqtl/astra": [
+    false,
+    true,
+    true,
+    false,
+    false,
+    false
+   ],
+   "crispr-interference/astra": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  },
   "Pointer to the output": {
    "admixture-dating/deepseek": [
     true,
@@ -1373,9 +1504,30 @@
     false,
     true
    ],
-   "control/single-cell-eqtl": [],
-   "control/selection-inference-a": [],
-   "control/selection-inference-b": []
+   "control/single-cell-eqtl": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "control/selection-inference-a": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    false
+   ],
+   "control/selection-inference-b": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
   },
   "Answer-informed question": {
    "admixture-dating/deepseek": [
@@ -1507,6 +1659,104 @@
     false
    ]
   }
+ },
+ "carrier_note_visible": {
+  "No note (baseline)": [
+   false,
+   true,
+   true,
+   false,
+   false,
+   false
+  ],
+  "Maximum reasoning effort": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "Generic reminder": [
+   false,
+   false,
+   true,
+   false,
+   false,
+   false
+  ],
+  "Self-review prompt": [
+   false,
+   false,
+   false,
+   false,
+   true,
+   true
+  ],
+  "Fresh reader: open question": [
+   false,
+   false,
+   false,
+   false,
+   true,
+   false
+  ],
+  "Fresh reader: assumptions": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "Fresh reader: largest impact": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "Fresh readers: all questions": [
+   false,
+   true,
+   true,
+   false,
+   false,
+   false
+  ],
+  "Fresh reader: disagreements": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "Pointer to another output": [
+   true,
+   true,
+   true,
+   false,
+   true,
+   true
+  ],
+  "Pointer to the output": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "Answer-informed question": [
+   true,
+   true,
+   false,
+   true,
+   false,
+   false
+  ]
  },
  "multi_turn": {
   "No note (baseline)": {

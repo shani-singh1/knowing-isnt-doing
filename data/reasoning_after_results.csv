@@ -1,0 +1,173 @@
+run,turn,result,reasoning_chars,turn_ended_with,output_limit_tokens
+Electrical-load series run 1,11,clean_numeric,319,tool_call,65536
+Electrical-load series run 1,13,clean_numeric,577,tool_call,65536
+Electrical-load series run 1,15,clean_numeric,911,tool_call,65536
+Electrical-load series run 2,11,clean_numeric,1166,tool_call,65536
+Electrical-load series run 3,11,clean_numeric,536,tool_call,65536
+Electrical-load series run 3,13,clean_numeric,583,tool_call,65536
+Electrical-load series run 3,15,clean_numeric,982,tool_call,65536
+Electrical-load series run 3,17,clean_numeric,2415,tool_call,65536
+Electrical-load series run 3,19,clean_numeric,4120,tool_call,65536
+Electrical-load series run 3,21,clean_numeric,480,tool_call,65536
+Carrier-frequency estimation,11,clean_numeric,357,tool_call,65536
+Carrier-frequency estimation,13,clean_numeric,1831,tool_call,65536
+Carrier-frequency estimation,15,clean_numeric,1140,tool_call,65536
+Carrier-frequency estimation,17,clean_numeric,522,tool_call,65536
+Carrier-frequency estimation,19,clean_numeric,349,tool_call,65536
+Carrier-frequency estimation,21,clean_numeric,626,tool_call,65536
+Carrier-frequency estimation,23,clean_numeric,708,tool_call,65536
+Carrier-frequency estimation,25,clean_numeric,676,tool_call,65536
+Carrier-frequency estimation,27,clean_numeric,3229,tool_call,65536
+Carrier-frequency estimation,29,clean_numeric,1118,tool_call,65536
+Carrier-frequency estimation,31,clean_numeric,624,tool_call,65536
+Carrier-frequency estimation,33,clean_numeric,1025,tool_call,65536
+Carrier-frequency estimation,35,clean_numeric,590,tool_call,65536
+Carrier-frequency estimation,37,clean_numeric,1576,tool_call,65536
+Carrier-frequency estimation,39,clean_numeric,641,tool_call,65536
+Carrier-frequency estimation,41,clean_numeric,1338,tool_call,65536
+Carrier-frequency estimation,43,clean_numeric,2067,tool_call,65536
+Carrier-frequency estimation,45,clean_numeric,1205,tool_call,65536
+Carrier-frequency estimation,47,clean_numeric,2079,tool_call,65536
+Carrier-frequency estimation,49,clean_numeric,3527,tool_call,65536
+Carrier-frequency estimation,51,clean_numeric,3697,tool_call,65536
+Carrier-frequency estimation,53,clean_numeric,6149,tool_call,65536
+Carrier-frequency estimation,55,clean_numeric,6435,tool_call,65536
+Carrier-frequency estimation,57,clean_numeric,798,tool_call,65536
+Carrier-frequency estimation,59,clean_numeric,920,tool_call,65536
+Carrier-frequency estimation,61,traceback,85,tool_call,65536
+Carrier-frequency estimation,63,clean_numeric,2672,tool_call,65536
+Carrier-frequency estimation,65,clean_numeric,776,tool_call,65536
+Carrier-frequency estimation,67,clean_numeric,1977,tool_call,65536
+Carrier-frequency estimation,69,clean_numeric,399,tool_call,65536
+Carrier-frequency estimation,71,clean_numeric,2991,tool_call,65536
+Carrier-frequency estimation,73,clean_numeric,257,tool_call,65536
+Carrier-frequency estimation,75,clean_numeric,1439,tool_call,65536
+Carrier-frequency estimation,77,clean_numeric,1066,tool_call,65536
+Carrier-frequency estimation,79,traceback,4456,tool_call,65536
+Carrier-frequency estimation,81,traceback,194,tool_call,65536
+Carrier-frequency estimation,83,clean_numeric,1494,tool_call,65536
+CRISPR interference screen,11,clean_numeric,355,tool_call,65536
+CRISPR interference screen,13,clean_numeric,1035,tool_call,65536
+CRISPR interference screen,15,clean_numeric,279,tool_call,65536
+CRISPR interference screen,17,clean_numeric,1525,tool_call,65536
+CRISPR interference screen,19,clean_numeric,1489,tool_call,65536
+CRISPR interference screen,21,clean_numeric,2866,tool_call,65536
+CRISPR interference screen,23,clean_numeric,1650,tool_call,65536
+CRISPR interference screen,25,clean_numeric,637,tool_call,65536
+CRISPR interference screen,27,clean_numeric,1057,tool_call,65536
+CRISPR interference screen,29,clean_numeric,9984,tool_call,65536
+CRISPR interference screen,31,clean_numeric,6736,tool_call,65536
+QTL mapping multiparent cross,11,clean_numeric,1054,tool_call,65536
+QTL mapping multiparent cross,13,clean_numeric,1808,tool_call,65536
+QTL mapping multiparent cross,15,clean_numeric,716,tool_call,65536
+QTL mapping multiparent cross,17,clean_numeric,522,tool_call,65536
+QTL mapping multiparent cross,19,clean_numeric,1736,tool_call,65536
+QTL mapping multiparent cross,21,clean_numeric,983,tool_call,65536
+QTL mapping multiparent cross,23,clean_numeric,821,tool_call,65536
+QTL mapping multiparent cross,25,clean_numeric,2387,tool_call,65536
+QTL mapping multiparent cross,27,clean_numeric,319,tool_call,65536
+QTL mapping multiparent cross,29,clean_numeric,532,tool_call,65536
+QTL mapping multiparent cross,31,clean_numeric,1083,tool_call,65536
+QTL mapping multiparent cross,33,clean_numeric,795,tool_call,65536
+QTL mapping multiparent cross,35,clean_numeric,380,tool_call,65536
+QTL mapping multiparent cross,37,clean_numeric,2185,tool_call,65536
+QTL mapping multiparent cross,39,clean_numeric,1911,tool_call,65536
+QTL mapping multiparent cross,41,clean_numeric,1191,tool_call,65536
+QTL mapping multiparent cross,43,clean_numeric,1076,tool_call,65536
+QTL mapping multiparent cross,45,clean_numeric,656,tool_call,65536
+QTL mapping multiparent cross,47,clean_numeric,722,tool_call,65536
+Mendelian randomization,11,clean_numeric,1008,tool_call,65536
+Mendelian randomization,13,traceback,0,tool_call,65536
+Mendelian randomization,15,clean_numeric,604,tool_call,65536
+Mendelian randomization,17,clean_numeric,1485,tool_call,65536
+Mendelian randomization,19,clean_numeric,317,tool_call,65536
+Mendelian randomization,21,clean_numeric,10591,tool_call,65536
+Mendelian randomization,23,clean_numeric,577,tool_call,65536
+Mendelian randomization,25,clean_numeric,1562,tool_call,65536
+Mendelian randomization,27,clean_numeric,1106,tool_call,65536
+Mendelian randomization,29,clean_numeric,1213,tool_call,65536
+Mendelian randomization,31,clean_numeric,1596,tool_call,65536
+Mendelian randomization,33,clean_numeric,602,tool_call,65536
+Mendelian randomization,35,clean_numeric,791,tool_call,65536
+Mendelian randomization,37,clean_numeric,3729,tool_call,65536
+Mendelian randomization,39,clean_numeric,3532,tool_call,65536
+Mendelian randomization,41,traceback,0,tool_call,65536
+Mendelian randomization,43,clean_numeric,105,tool_call,65536
+Single-cell expression QTL,11,clean_numeric,864,tool_call,65536
+Single-cell expression QTL,13,clean_numeric,312,tool_call,65536
+Single-cell expression QTL,15,clean_numeric,1599,tool_call,65536
+Single-cell expression QTL,17,clean_numeric,3420,tool_call,65536
+Single-cell expression QTL,19,clean_numeric,606,tool_call,65536
+Single-cell expression QTL,21,clean_numeric,1921,tool_call,65536
+Single-cell expression QTL,23,traceback,108,tool_call,65536
+Single-cell expression QTL,25,clean_numeric,621,tool_call,65536
+Single-cell expression QTL,27,clean_numeric,1014,tool_call,65536
+Structural-variant association,11,clean_numeric,235,tool_call,65536
+Structural-variant association,13,traceback,114,tool_call,65536
+Structural-variant association,15,clean_numeric,372,tool_call,65536
+Structural-variant association,17,clean_numeric,900,tool_call,65536
+Structural-variant association,19,clean_numeric,1526,tool_call,65536
+Structural-variant association,21,clean_numeric,756,tool_call,65536
+Structural-variant association,23,clean_numeric,2426,tool_call,65536
+Structural-variant association,25,clean_numeric,1050,tool_call,65536
+Structural-variant association,27,clean_numeric,1315,tool_call,65536
+Structural-variant association,29,clean_numeric,1376,tool_call,65536
+Structural-variant association,31,clean_numeric,251,tool_call,65536
+Structural-variant association,33,clean_numeric,655,tool_call,65536
+Structural-variant association,35,clean_numeric,1088,tool_call,65536
+Structural-variant association,37,clean_numeric,653,tool_call,65536
+Structural-variant association,39,clean_numeric,1220,tool_call,65536
+Structural-variant association,41,clean_numeric,974,tool_call,65536
+Structural-variant association,43,clean_numeric,1898,tool_call,65536
+Structural-variant association,45,clean_numeric,316,tool_call,65536
+Structural-variant association,47,clean_numeric,499,tool_call,65536
+Treatment-effect estimation,11,traceback,192,tool_call,65536
+Treatment-effect estimation,13,clean_numeric,727,tool_call,65536
+Treatment-effect estimation,15,clean_numeric,380,tool_call,65536
+Treatment-effect estimation,17,clean_numeric,723,tool_call,65536
+Treatment-effect estimation,19,clean_numeric,1139,tool_call,65536
+Treatment-effect estimation,21,clean_numeric,668,tool_call,65536
+Treatment-effect estimation,23,clean_numeric,791,tool_call,65536
+Treatment-effect estimation,25,clean_numeric,1869,tool_call,65536
+Treatment-effect estimation,27,clean_numeric,2029,tool_call,65536
+Treatment-effect estimation,29,traceback,706,tool_call,65536
+Treatment-effect estimation,31,clean_numeric,756,tool_call,65536
+Treatment-effect estimation,33,clean_numeric,2578,tool_call,65536
+Treatment-effect estimation,35,clean_numeric,1918,tool_call,65536
+Treatment-effect estimation,37,traceback,299,tool_call,65536
+Treatment-effect estimation,39,clean_numeric,886,tool_call,65536
+Treatment-effect estimation,41,clean_numeric,1350,tool_call,65536
+Treatment-effect estimation,43,clean_numeric,1512,tool_call,65536
+Treatment-effect estimation,45,clean_numeric,938,tool_call,65536
+Treatment-effect estimation,47,clean_numeric,2154,tool_call,65536
+Treatment-effect estimation,49,clean_numeric,2500,tool_call,65536
+Treatment-effect estimation,51,clean_numeric,2476,tool_call,65536
+Treatment-effect estimation,53,clean_numeric,611,tool_call,65536
+Treatment-effect estimation,55,clean_numeric,628,tool_call,65536
+Treatment-effect estimation,57,clean_numeric,743,tool_call,65536
+Treatment-effect estimation,59,clean_numeric,417,tool_call,65536
+Selection inference,11,clean_numeric,3072,tool_call,65536
+Selection inference,13,clean_numeric,540,tool_call,65536
+Selection inference,15,clean_numeric,390,tool_call,65536
+Selection inference,17,clean_numeric,1187,tool_call,65536
+Selection inference,19,clean_numeric,929,tool_call,65536
+Selection inference,21,clean_numeric,1609,tool_call,65536
+Selection inference,23,clean_numeric,757,tool_call,65536
+Selection inference,25,clean_numeric,599,tool_call,65536
+Selection inference,27,clean_numeric,444,tool_call,65536
+Selection inference,29,clean_numeric,1418,tool_call,65536
+Chromatin-contact loop strength,11,clean_numeric,1727,tool_call,65536
+Chromatin-contact loop strength,13,clean_numeric,1071,tool_call,65536
+Chromatin-contact loop strength,15,clean_numeric,825,tool_call,65536
+Chromatin-contact loop strength,17,clean_numeric,674,tool_call,65536
+Admixture dating,11,clean_numeric,1572,tool_call,65536
+Admixture dating,13,clean_numeric,1638,tool_call,65536
+Admixture dating,15,clean_numeric,1474,tool_call,65536
+Admixture dating,17,clean_numeric,2648,tool_call,65536
+Repeated survey run 2,11,clean_numeric,649,tool_call,65536
+Repeated survey run 2,13,clean_numeric,279,tool_call,65536
+Repeated survey run 2,15,clean_numeric,601,tool_call,65536
+Repeated survey run 3,11,clean_numeric,275,tool_call,65536
+Repeated survey run 3,13,clean_numeric,703,tool_call,65536
+Repeated survey run 3,15,clean_numeric,537,tool_call,65536
+Repeated survey run 3,17,clean_numeric,671,tool_call,65536

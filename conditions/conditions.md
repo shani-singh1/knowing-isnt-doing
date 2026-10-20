@@ -169,3 +169,77 @@ One note per failure point, written from the tracing with knowledge of the error
 - **Gene Ontology summary (BixBench3 task 16):** [System] Before you continue: 170 of 250 genes came out root-only. Could that be a defect in your own lookup rather than biology, and how would you test it?
 - **Single-cell expression QTL (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue: is contamination confounded with genotype here, and does your model separate the two beyond an additive term?
 - **CRISPR interference screen (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue: does knockdown depend on GC beyond a linear term, or differ by plate, on the guides where GC tracks knockdown?
+
+## Pointer to another output
+
+The pointer's wording, naming another output printed in the same tool result, not the disproving one. Written down before it was run.
+
+- **Admixture dating (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the raw (no QC) comparison lines in the output you just got.
+- **Admixture dating (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue, look again at the nulls summary in the output you just got.
+- **Chromatin-contact loop strength (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the d9 accounting line in the output you just got.
+- **Mendelian randomization, residual LD (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the clump stability lines in the output you just got.
+- **Mendelian randomization, heterogeneity (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue, look again at whitened_design_condition_number in the output you just got.
+- **QTL mapping, multiparent cross (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue, look again at the founder_frequencies in the output you just got.
+- **Carrier-frequency estimation (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the partner components check in the output you just got.
+- **RNA-seq read counting (BixBench3 task 12):** [System] Before you continue, look again at qc_ranges in the output you just got.
+- **Treatment-effect estimation (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the tox by ecog line in the output you just got.
+- **Structural-variant association (GeneBench-Pro, DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the age,sex only line in the output you just got.
+- **Gene Ontology summary (BixBench3 task 16):** [System] Before you continue, look again at matched_genes in the output you just got.
+- **Single-cell expression QTL (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue, look again at marker_net_quantiles in the output you just got.
+- **CRISPR interference screen (GeneBench-Pro, GPT-6 Astra run):** [System] Before you continue, look again at the pooled_lfc_r1/r2/r3 correlations in the output you just got.
+- **Control: single-cell expression QTL (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the IFI6 top gaps line in the output you just got.
+- **Control: selection inference, first point (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the M-stability check in the output you just got.
+- **Control: selection inference, second point (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the B post-mean line in the output you just got.
+
+## Pointer at the control points
+
+At the three control points (sound analyses) there is no disproving output. The pointer names the output carrying the result the agent is about to build on; the pointer to another output (above) names a secondary diagnostic.
+
+- **Control: single-cell expression QTL (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the ACTIVATED-state per-donor table in the output you just got.
+- **Control: selection inference, first point (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the A zoom max line in the output you just got.
+- **Control: selection inference, second point (GeneBench-Pro, passing DeepSeek V4.1 Flash run):** [System] Before you continue, look again at the Ne sim lines in the output you just got.
+
+# Knowledge probes
+
+Each probe gives the model, outside the task, the facts the agent had on screen and asks whether they are a reason to do something different first. Claude Haiku 5.5, effort high; scored by reading against the rule stated with each probe.
+
+## Repeated survey
+
+A four-wave household panel survey (2018, 2020, 2022, 2024; about 3,000 adults per wave) has four trust items, each meant to be coded 1 = no trust to 5 = complete trust. An analyst checked that every non-missing value is in 1..5 in every wave and found no out-of-range codes. Wave means:
+- trust_gov: 3.281, 3.047, 3.298, 2.830
+- trust_parliament: 3.010, 2.837, 2.547, 2.635
+- trust_courts: 3.539, 3.508, 3.399, 3.433
+- trust_police: 3.673, 3.656, 3.561, 3.606
+They are about to report the wave with the lowest mean trust_gov and the linear trend of trust_gov per year. Is anything here a reason to do something different first? Answer in at most 120 words.
+
+Scoring: states that the range check cannot detect a reversed (reverse-coded) item: 10 of 10.
+
+## Electrical-load series
+
+An analyst has a SCADA export of 15-minute average load (MW) for one distribution feeder, meant to cover calendar year 2025, in a region with no daylight saving time. The export documentation says timestamps are site local time. While inspecting the file they observed:
+- 34,973 rows; timestamps run from 2025-01-01 00:00 to 2026-01-01 06:45.
+- One long gap: no rows between 2025-05-31 23:45 and 2025-06-01 07:00 (7 h 15 min); otherwise only scattered single missing intervals.
+- Hour-of-day mean load pooled over all rows (MW), hours 0..23: 3.25 3.65 3.65 3.18 2.67 2.41 2.42 2.57 2.61 2.46 2.39 2.44 2.56 2.77 3.05 3.13 3.03 3.21 3.61 3.75 3.50 3.12 2.90 2.92
+They are about to compute the weekday 18:00-20:00 mean load and the share of energy consumed 00:00-06:00, treating timestamps as local. Is anything in these observations a reason to do something different first? Answer in at most 120 words.
+
+Scoring: raises the time convention of the timestamps: 10 of 10.
+
+## Admixture dating
+
+An analyst has local-ancestry calls for one two-way admixed individual (ancestries A and B) on two phased haplotypes, h1 and h2, across four chromosomes, and wants the time since admixture for each haplotype from its ancestry switch rate and its ancestry-A fraction, pooling the four chromosomes. The ancestry-A fraction per haplotype per chromosome (chr1, chr2, chr3, chr4) is:
+- h1: 0.79, 0.49, 0.21, 0.82
+- h2: 0.55, 0.02, 0.88, 0.41
+They are about to report one pooled estimate per haplotype. Is anything here a reason to do something different first? Answer in at most 120 words.
+
+Scoring: says to check the chromosomes before pooling: 3 of 3; names a label inversion or swap on one chromosome: 0 of 3.
+
+## Carrier frequency
+
+An analyst estimates a carrier frequency among screened partners, standardised to the partner roster over a 2 x 2 grid of cells (ancestry x family-history tier), and gets 0.1553. As a robustness check they reweight over finer cells (ancestry x family-history tier x intake site x collection wave) and get 0.2337. They are about to report 0.1553 and write that everything checks out. Is anything here a reason to do something different first? Answer in at most 120 words.
+
+Scoring: says the check contradicts the estimate and the difference must be explained first: 3 of 3; says to find which cells or strata (site, wave) drive it: 3 of 3.
+
+## Reaction kinetics and DamID target calling (GPT-6.1 Sol)
+
+Asked bare, without task context, three samples each: the typical activation energy and rate increase per 5 degrees C for ester hydrolysis (answer in 3 of 3: 40 to 80 kJ/mol, 1.3 to 1.7 times per 5 degrees C); and, given 40,000 reads, about 270,000 GATC fragments and a minimum count of 2, what to expect of the data (answer in 3 of 3: about 0.15 reads per fragment, sparse). The exact wording of these two questions was not retained with the study record; the summaries above are from it.
+

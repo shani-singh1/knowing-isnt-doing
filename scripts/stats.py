@@ -29,6 +29,7 @@ POINTS = [p["id"] for p in D["failure_points"]]
 CONTROLS = D["control_points"]
 CONDS = D["conditions"]
 BASE, POINTER, ANSWER = "No note (baseline)", "Pointer to the output", "Answer-informed question"
+WRONG = "Pointer to another output"
 BEST_READER = "Fresh reader: disagreements"
 RNG = np.random.default_rng(20261020)
 REPS = 20000
@@ -61,9 +62,22 @@ def interventions() -> None:
         hk, hn = k_of(c, CONTROLS)
         print(line + f"   {hk}/{hn}")
     print("\npaired per-point tests")
-    for c1, c2 in ((ANSWER, BEST_READER), (ANSWER, BASE), (BEST_READER, BASE), (POINTER, BASE),
-                   (POINTER, BEST_READER), (ANSWER, POINTER)):
-        paired(c1, c2)
+    rows = []
+    for c1, c2 in ([(c, BASE) for c in CONDS if c != BASE] +
+                   [(POINTER, WRONG), (POINTER, BEST_READER), (ANSWER, POINTER)]):
+        rows.append(paired(c1, c2))
+    with open(ROOT / "figures" / "tab_tests.tex", "w", encoding="utf-8") as f:
+        for c1, c2, pos, neg, tie, ps, pp in rows:
+            f.write(f"{c1} & {c2} & {pos} & {neg} & {tie} & {fmt_p(ps)} & {fmt_p(pp)}\\\\\n")
+    sens = D["carrier_note_visible"]
+    print("\nsensitivity, carrier point scored with the note visible to the judge (pooled follow-ups / 78):")
+    with open(ROOT / "figures" / "tab_sensitivity.tex", "w", encoding="utf-8") as f:
+        for c in CONDS:
+            k = k_of(c)[0]
+            ks = k - sum(ST[c]["carrier-frequency/deepseek"]) + sum(sens[c])
+            print(f"  {c:32s} carrier {sum(ST[c]['carrier-frequency/deepseek'])}/6 -> {sum(sens[c])}/6; "
+                  f"pooled {k}/78 -> {ks}/78")
+            f.write(f"{c} & {sum(ST[c]['carrier-frequency/deepseek'])} & {sum(sens[c])} & {k} & {ks}\\\\\n")
     bb, pp, oo = (k_of(c)[0] for c in (BASE, POINTER, ANSWER))
     print(f"  share of the answer-informed increase recovered by the pointer: ({pp} - {bb}) / ({oo} - {bb}) = "
           f"{(pp - bb) / (oo - bb):.3f}")
@@ -71,15 +85,22 @@ def interventions() -> None:
     print(f"  0/{nh} rework: two-sided 95% upper bound {1 - 0.025 ** (1 / nh):.3f}")
 
 
-def paired(c1: str, c2: str) -> None:
+def fmt_p(p: float) -> str:
+    """Two significant figures, as the paper quotes p values."""
+    return "1" if p >= 0.995 else f"{float(f'{p:.2g}'):g}"
+
+
+def paired(c1: str, c2: str) -> tuple:
     d = np.array([sum(ST[c1][p]) - sum(ST[c2][p]) for p in POINTS])
     pos, neg = int((d > 0).sum()), int((d < 0).sum())
     k, n = min(pos, neg), pos + neg
     p_sign = min(1.0, 2 * sum(comb(n, i) for i in range(k + 1)) / 2 ** n) if n else 1.0
     obs = abs(d.sum())
     hits = sum(abs((d * np.array(s)).sum()) >= obs for s in product((1, -1), repeat=len(d)))
+    p_perm = hits / 2 ** len(d)
     print(f"  {c1} vs {c2}: above at {pos}, below at {neg}, tied at {len(d) - n} of {len(d)} points; "
-          f"sign test p = {p_sign:.5f}; sign-flip permutation p = {hits / 2 ** len(d):.5f}")
+          f"sign test p = {p_sign:.5f}; sign-flip permutation p = {p_perm:.5f}")
+    return c1, c2, pos, neg, len(d) - n, p_sign, p_perm
 
 
 def cohen_kappa(a: list[str], b: list[str]) -> float:
@@ -92,26 +113,33 @@ def cohen_kappa(a: list[str], b: list[str]) -> float:
 
 def classification() -> None:
     rows = list(csv.DictReader(open(ROOT / "data" / "failure_classification.csv", encoding="utf-8")))
-    a, b = [r["first_pass"] for r in rows], [r["second_pass"] for r in rows]
+    a, b = [r["primary_class"] for r in rows], [r["second_rater_class"] for r in rows]
     agree = sum(x == y for x, y in zip(a, b))
     print(f"\nfailures {len(rows)} ({Counter(r['benchmark'] for r in rows)}); established "
           f"{sum(r['cause_status'] == 'established' for r in rows)}, probable {sum(r['cause_status'] == 'probable' for r in rows)}")
-    print(f"agreement between passes {agree}/{len(rows)} = {agree / len(rows):.3f}; Cohen kappa {cohen_kappa(a, b):.3f}")
-    print("disagreements:", dict(Counter((x, y) for x, y in zip(a, b) if x != y)))
-    for name, lab in (("first pass", a), ("second pass", b)):
+    print(f"agreement, primary class vs independent rater: {agree}/{len(rows)} = {agree / len(rows):.3f}; "
+          f"Cohen kappa {cohen_kappa(a, b):.3f}")
+    for bench in ("BixBench3", "GeneBench-Pro"):
+        aa = [r["primary_class"] for r in rows if r["benchmark"] == bench]
+        bb = [r["second_rater_class"] for r in rows if r["benchmark"] == bench]
+        print(f"  {bench}: {sum(x == y for x, y in zip(aa, bb))}/{len(aa)}, kappa {cohen_kappa(aa, bb):.3f}")
+    print("disagreements (primary, rater):", dict(Counter((x, y) for x, y in zip(a, b) if x != y)))
+    print("failures with two co-dominant causes in the report:", sum(bool(r["co_dominant_alternative"]) for r in rows))
+    for name, lab in (("primary", a), ("second rater", b)):
         c = Counter(lab)
         tot = sum(c[k] for k in AGENT)
-        print(f"  {name}: share of {len(rows)}: " + "; ".join(f"{k} {v / len(rows):.3f}" for k, v in sorted(c.items())))
+        print(f"  {name}: share of {len(rows)}: " + "; ".join(f"{k} {v}/{len(rows)} = {v / len(rows):.3f}"
+                                                         for k, v in sorted(c.items())))
         print(f"  {name}: agent-attributable {tot}: " + "; ".join(f"{k} {c[k] / tot:.3f}" for k in AGENT))
     on = "disproving number on screen, not acted on"
     gb = [r for r in rows if r["benchmark"] == "GeneBench-Pro"]
-    prim = sum(r["first_pass"] == on for r in gb)
-    contrib = sum(r["first_pass"] != on and r["contributing_cause"] == on for r in gb)
+    prim = sum(r["primary_class"] == on for r in gb)
+    contrib = sum(r["primary_class"] != on and r["contributing_cause"] == on for r in gb)
     print(f"GeneBench-Pro keys with the disproving number printed: primary {prim}, contributing {contrib}, "
           f"total {prim + contrib} of {len(gb)} ({(prim + contrib) / len(gb):.3f})")
     groups = {}
     for r in rows:
-        groups.setdefault((r["run"], r["problem"], r["first_pass"]), []).append(r)
+        groups.setdefault((r["run"], r["problem"], r["primary_class"]), []).append(r)
     gc = Counter(k[2] for k in groups)
     gp = sum(gc[k] for k in AGENT)
     print(f"cause groups (same run, same problem, same primary class): {len(groups)}; agent-attributable {gp}: "
